@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">Xilancer</string>
+    <string name="facebook_app_id">913059980503192</string>
+    <string name="fb_login_protocol_scheme">fb913059980503192</string>
+    <string name="facebook_client_token">44e67810832c4515e3ac2be5d4773d6b</string>
+</resources>

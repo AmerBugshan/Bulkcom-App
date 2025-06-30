@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>584342828126-v2chak89t4heoqi33fsp168hfgjoc2iq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.584342828126-v2chak89t4heoqi33fsp168hfgjoc2iq</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>584342828126-8s6t24ng9gbujf0sd48c5mnopnle6b7k.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDAUego2i7s304IPbwG0Av-sM6Ch3NYu20</string>
+	<key>GCM_SENDER_ID</key>
+	<string>584342828126</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.fundorex</string>
+	<key>PROJECT_ID</key>
+	<string>funderox</string>
+	<key>STORAGE_BUCKET</key>
+	<string>funderox.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:584342828126:ios:248a885d8bdd86111770cf</string>
+</dict>
+</plist>

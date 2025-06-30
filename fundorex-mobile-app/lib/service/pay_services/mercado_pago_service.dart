@@ -1,0 +1,47 @@
+import 'package:flutter/material.dart';
+import 'package:fundorex/service/donate_service.dart';
+import 'package:fundorex/service/event_book_pay_service.dart';
+import 'package:fundorex/view/payments_pages/mercado_pago_payment_page.dart';
+import 'package:provider/provider.dart';
+
+class MercadoPagoService {
+  payByMercado(
+    BuildContext context, {
+    required isFromEventBook,
+  }) {
+    //========>
+    Provider.of<DonateService>(context, listen: false).setLoadingFalse();
+    Provider.of<EventBookPayService>(context, listen: false).setLoadingFalse();
+
+    '';
+    var amount;
+    var name;
+    var email;
+
+    if (isFromEventBook == false) {
+      final dt = Provider.of<DonateService>(context, listen: false);
+      amount = dt.donationAmountWithTips + dt.transactionFeeAmount;
+
+      amount = amount.toStringAsFixed(2);
+      name = dt.userEnteredNameWhileDonating;
+      email = dt.userEnteredEmailWhileDonating;
+    } else {
+      amount =
+          Provider.of<EventBookPayService>(context, listen: false).eventPrice;
+      amount = double.parse(amount).toStringAsFixed(2);
+      name = Provider.of<EventBookPayService>(context, listen: false).name;
+      email = Provider.of<EventBookPayService>(context, listen: false).email;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) => MercadopagoPaymentPage(
+          amount: amount,
+          name: name,
+          email: email,
+          isFromEventBook: isFromEventBook,
+        ),
+      ),
+    );
+  }
+}
