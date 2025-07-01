@@ -33,7 +33,7 @@ class Categories extends StatelessWidget {
                       children: [
                         SectionTitle(
                           cc: cc,
-                          title: ln.getString('Categories'),
+                          title: ln.getString('التصنيفات'),
                           pressed: () {
                             Navigator.push(
                               context,

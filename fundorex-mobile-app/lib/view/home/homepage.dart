@@ -107,8 +107,8 @@ class _HomepageState extends State<Homepage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CommonHelper().titleCommon("Hello! 👋"),
-                          CommonHelper().titleCommon("Welcome to Fundorex"),
+                          CommonHelper().titleCommon("مرحبا! 👋"),
+                          CommonHelper().titleCommon("أهلا بك الى بلكوم"),
                         ],
                       ),
                     ),
@@ -127,7 +127,7 @@ class _HomepageState extends State<Homepage> {
                       height: 25,
                     ),
                     //Slider ========>
-                    const SliderHome(),
+                    // const SliderHome(),
 
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: screenPadding),

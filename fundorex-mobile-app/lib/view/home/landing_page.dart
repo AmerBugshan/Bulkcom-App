@@ -62,7 +62,7 @@ class _HomePageState extends State<LandingPage> {
                     now.difference(currentBackPressTime!) >
                         const Duration(seconds: 2)) {
                   currentBackPressTime = now;
-                  OthersHelper().showToast("Press again to exit", Colors.black);
+                  OthersHelper().showToast("اضغط مرة اخرى للخروج", Colors.black);
                   return;
                 }
                 SystemNavigator.pop();

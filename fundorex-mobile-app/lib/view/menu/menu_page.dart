@@ -25,7 +25,7 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     ConstantColors cc = ConstantColors();
     return Scaffold(
-        appBar: CommonHelper().appbarCommon('Events', context, () {},
+        appBar: CommonHelper().appbarCommon('الاعدادات', context, () {},
             hasBackBtn: false, bgColor: Colors.white),
         backgroundColor: cc.bgGrey,
         body: SingleChildScrollView(

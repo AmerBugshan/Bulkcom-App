@@ -35,7 +35,7 @@ class SectionTitle extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          ln.getString("See all"),
+                          ln.getString("المزيد"),
                           style: TextStyle(
                             color: cc.primaryColor,
                             fontSize: 15,

@@ -25,7 +25,7 @@ class CampaignCard extends StatelessWidget {
     required this.camapaignId,
     required this.raisedAmount,
     required this.goalAmount,
-    this.buttonText = 'Donate',
+    this.buttonText = 'شارك الان!',
     required this.remainingTime,
   });
 

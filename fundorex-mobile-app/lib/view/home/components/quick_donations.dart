@@ -24,7 +24,7 @@ class QuickDonations extends StatelessWidget {
       builder: (context, provider, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CommonHelper().titleCommon('Quick Donations'),
+          CommonHelper().titleCommon('شارك بشكل اسرع'),
           sizedBoxCustom(18),
           provider.campaignDropdownList.isNotEmpty
               ? Consumer<RtlService>(
@@ -96,7 +96,7 @@ class QuickDonations extends StatelessWidget {
                       //Button
                       SizedBox(
                         width: 90,
-                        child: CommonHelper().buttonPrimary('Donate', () {
+                        child: CommonHelper().buttonPrimary('شارك', () {
                           Provider.of<CampaignDetailsService>(context,
                                   listen: false)
                               .fetchCampaignDetails(

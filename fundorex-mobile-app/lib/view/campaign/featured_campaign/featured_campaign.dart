@@ -29,7 +29,7 @@ class FeaturedCampaign extends StatelessWidget {
                     children: [
                       SectionTitle(
                         cc: cc,
-                        title: ln.getString('Featured campaigns'),
+                        title: ln.getString('الحملات المقترحة'),
                         pressed: () {
                           Navigator.push(
                             context,

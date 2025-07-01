@@ -29,7 +29,7 @@ class RecentlyAdded extends StatelessWidget {
                     children: [
                       SectionTitle(
                         cc: cc,
-                        title: ln.getString('Recent campaigns'),
+                        title: ln.getString('الحملات الحديثة'),
                         pressed: () {
                           Navigator.push(
                             context,

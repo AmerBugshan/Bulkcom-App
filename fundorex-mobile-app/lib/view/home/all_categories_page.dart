@@ -20,7 +20,7 @@ class AllCategoriesPage extends StatelessWidget {
 
     ConstantColors cc = ConstantColors();
     return Scaffold(
-      appBar: CommonHelper().appbarCommon('All categories', context, () {
+      appBar: CommonHelper().appbarCommon('كل التصنيفات', context, () {
         Navigator.pop(context);
       }, bgColor: Colors.white),
       backgroundColor: Colors.white,

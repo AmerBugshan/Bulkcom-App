@@ -35,7 +35,7 @@ class BottomNav extends StatelessWidget {
                     color: currentIndex == 0 ? cc.primaryColor : cc.greyFour,
                     semanticsLabel: 'Acme Logo'),
               ),
-              label: ln.getString('Home'),
+              label: ln.getString('الرئيسية'),
             ),
             BottomNavigationBarItem(
               icon: Container(
@@ -45,7 +45,7 @@ class BottomNav extends StatelessWidget {
                     color: currentIndex == 1 ? cc.primaryColor : cc.greyFour,
                     semanticsLabel: 'Acme Logo'),
               ),
-              label: ln.getString('Events'),
+              label: ln.getString(''),
             ),
             BottomNavigationBarItem(
               icon: Container(
@@ -54,7 +54,7 @@ class BottomNav extends StatelessWidget {
                     color: currentIndex == 2 ? cc.primaryColor : cc.greyFour,
                     semanticsLabel: 'Acme Logo'),
               ),
-              label: ln.getString('Menu'),
+              label: ln.getString('الاعدادات'),
             ),
             BottomNavigationBarItem(
               icon: Container(
@@ -64,7 +64,7 @@ class BottomNav extends StatelessWidget {
                     color: currentIndex == 3 ? cc.primaryColor : cc.greyFour,
                     semanticsLabel: 'Acme Logo'),
               ),
-              label: ln.getString('Profile'),
+              label: ln.getString('حسابي '),
             ),
           ],
         ),

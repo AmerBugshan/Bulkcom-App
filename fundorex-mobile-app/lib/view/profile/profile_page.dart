@@ -38,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
         backgroundColor: cc.bgGrey,
-        appBar: CommonHelper().appbarCommon('Profile', context, () {},
+        appBar: CommonHelper().appbarCommon('حسابي', context, () {},
             hasBackBtn: false, bgColor: Colors.white),
         body: SafeArea(
           child: SingleChildScrollView(
