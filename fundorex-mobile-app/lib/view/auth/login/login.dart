@@ -79,24 +79,24 @@ class _LoginPageState extends State<LoginPage> {
                           height: 60,
                         ),
                         CommonHelper()
-                            .titleCommon(ln.getString("Welcome back! Login")),
+                            .titleCommon(ln.getString("مرحبًا بعودتك! الرجاء تسجيل الدخول")),
 
                         const SizedBox(
                           height: 33,
                         ),
 
                         //Name ============>
-                        CommonHelper().labelCommon(ln.getString("Email")),
+                        CommonHelper().labelCommon(ln.getString("البريد الالكتروني")),
 
                         CustomInput(
                           controller: emailController,
                           validation: (value) {
                             if (value == null || value.isEmpty) {
-                              return ln.getString('Please enter your email');
+                              return ln.getString('ادخل البريد الالكتروني');
                             }
                             return null;
                           },
-                          hintText: ln.getString("Email"),
+                          hintText: ln.getString("البريد الالكتروني"),
                           icon: 'assets/icons/user.png',
                           textInputAction: TextInputAction.next,
                         ),
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
 
                         //password ===========>
-                        CommonHelper().labelCommon(ln.getString("Password")),
+                        CommonHelper().labelCommon(ln.getString("كلمة المرور")),
 
                         Container(
                             margin: const EdgeInsets.only(bottom: 19),
@@ -119,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return ln
-                                      .getString('Please enter your password');
+                                      .getString('ادخل كلمة المرور');
                                 }
                                 return null;
                               },
@@ -175,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                                       borderSide: BorderSide(
                                           color:
                                               ConstantColors().primaryColor)),
-                                  hintText: ln.getString('Enter password'),
+                                  hintText: ln.getString('ادخل كلمة المرور'),
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 18)),
                             )),
@@ -194,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 5),
                                   child: Text(
-                                    ln.getString("Remember me"),
+                                    ln.getString("تذكرني"),
                                     style: TextStyle(
                                         color: ConstantColors().greyFour,
                                         fontWeight: FontWeight.w400,
@@ -229,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                                 width: 122,
                                 height: 40,
                                 child: Text(
-                                  ln.getString("Forgot Password?"),
+                                  ln.getString("نسيت كلمة المرور؟"),
                                   style: TextStyle(
                                       color: cc.primaryColor,
                                       fontSize: 13,
@@ -247,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
 
                         Consumer<LoginService>(
                           builder: (context, provider, child) => CommonHelper()
-                              .buttonPrimary(ln.getString("Sign In"), () {
+                              .buttonPrimary(ln.getString("تسجيل دخول"), () {
                             if (provider.isloading == false) {
                               if (_formKey.currentState!.validate()) {
                                 provider
@@ -285,7 +285,7 @@ class _LoginPageState extends State<LoginPage> {
                             RichText(
                               text: TextSpan(
                                 text:
-                                    ln.getString("Do not have account?") + ' ',
+                                    ln.getString("ليس لديك حساب؟") + ' ',
                                 style: const TextStyle(
                                     color: Color(0xff646464), fontSize: 14),
                                 children: <TextSpan>[
@@ -298,7 +298,7 @@ class _LoginPageState extends State<LoginPage> {
                                                   builder: (context) =>
                                                       const SignupPage()));
                                         },
-                                      text: ln.getString('Sign Up'),
+                                      text: ln.getString('سجل الان!'),
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 14,
@@ -328,7 +328,7 @@ class _LoginPageState extends State<LoginPage> {
                               alignment: Alignment.center,
                               margin: const EdgeInsets.only(bottom: 25),
                               child: Text(
-                                ln.getString("OR"),
+                                ln.getString("أو"),
                                 style: TextStyle(
                                     color: cc.greyPrimary,
                                     fontSize: 17,

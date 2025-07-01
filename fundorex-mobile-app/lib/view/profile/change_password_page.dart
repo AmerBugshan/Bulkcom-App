@@ -67,7 +67,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         //New password =========================>
-                        CommonHelper().labelCommon("Enter current password"),
+                        CommonHelper().labelCommon("ادخل الرقم السري الحالي"),
 
                         Container(
                             margin: const EdgeInsets.only(bottom: 19),
@@ -299,7 +299,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         ),
                         Consumer<ChangePassService>(
                           builder: (context, provider, child) => CommonHelper()
-                              .buttonPrimary("Change password", () {
+                              .buttonPrimary("تغيير الرقم السري", () {
                             if (provider.isloading == false) {
                               if (_formKey.currentState!.validate()) {
                                 provider.changePassword(

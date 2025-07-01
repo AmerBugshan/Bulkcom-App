@@ -43,7 +43,7 @@ class ProfileHelper {
             child: Column(
               children: [
                 Text(
-                  ln.getString('Are you sure?'),
+                  ln.getString('هل انت متأكد ؟'),
                   style: TextStyle(color: cc.greyPrimary, fontSize: 17),
                 ),
                 const SizedBox(
@@ -52,7 +52,7 @@ class ProfileHelper {
                 Row(
                   children: [
                     Expanded(
-                        child: CommonHelper().borderButtonPrimary('Cancel', () {
+                        child: CommonHelper().borderButtonPrimary('الغاء', () {
                       Navigator.pop(context);
                     })),
                     const SizedBox(

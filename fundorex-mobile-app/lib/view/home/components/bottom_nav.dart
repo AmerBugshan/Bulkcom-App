@@ -40,10 +40,10 @@ class BottomNav extends StatelessWidget {
             BottomNavigationBarItem(
               icon: Container(
                 margin: const EdgeInsets.only(bottom: 6),
-                child: SvgPicture.asset('assets/svg/calendar.svg',
-                    height: 19,
-                    color: currentIndex == 1 ? cc.primaryColor : cc.greyFour,
-                    semanticsLabel: 'Acme Logo'),
+                // child: SvgPicture.asset('assets/svg/calendar.svg',
+                //     height: 19,
+                //     color: currentIndex == 1 ? cc.primaryColor : cc.greyFour,
+                //     semanticsLabel: 'Acme Logo'),
               ),
               label: ln.getString(''),
             ),

@@ -30,12 +30,12 @@ class LoginOrRegister extends StatelessWidget {
           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: CommonHelper().titleCommon(
-                  "You'll have to login/register to edit or see your profile info.",
+                  "ستحتاج إلى تسجيل الدخول أو إنشاء حساب لتعديل أو عرض معلومات ملفك الشخصي.",
                   fontsize: 16,
                   textAlign: TextAlign.center)),
           const SizedBox(height: 20),
           CustomButton(
-              btText: 'Login/Register'.tr(),
+              btText: 'تسجيل الدخول / إنشاء حساب'.tr(),
               onPressed: () {
                 Navigator.push(
                   context,
