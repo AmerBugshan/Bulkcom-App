@@ -128,7 +128,7 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<RtlService>(
         builder: (context, rtlP, child) => MaterialApp(
-          title: 'Fundorex',
+          title: 'Bulkcom | بلكوم',
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
