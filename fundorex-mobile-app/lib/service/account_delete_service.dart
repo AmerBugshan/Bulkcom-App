@@ -23,7 +23,7 @@ class AccountDeleteService with ChangeNotifier {
     var id = sPref.getInt('userId');
     var data = jsonEncode({'user_id': "id".toString()});
     isLoading = true;
-    if (baseApi.contains("xgenious")) {
+    if (baseApi.contains("bulk")) {
       await Future.delayed(const Duration(seconds: 1));
       "This function is turned off for demo app".showToast();
 
