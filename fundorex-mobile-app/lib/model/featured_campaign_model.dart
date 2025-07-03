@@ -137,6 +137,8 @@ class Datum {
     required this.image,
     required this.deadline,
     required this.reamainingTime,
+    this.titleAr,
+    this.price,
   });
 
   dynamic id;
@@ -147,24 +149,35 @@ class Datum {
   DateTime? deadline;
   DateTime? reamainingTime;
 
+  // ✅ NEW FIELDS
+  String? titleAr;
+  dynamic price;
+
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        id: json["id"],
-        title: json["title"],
-        raised: json["raised"],
-        amount: json["amount"],
-        image: json["image"],
-        deadline: DateTime.tryParse(json["deadline"]),
-        reamainingTime: DateTime.tryParse(json["reamaining_time"].toString()),
-      );
+    id: json["id"],
+    title: json["title"] ?? '',
+    raised: json["raised"],
+    amount: json["amount"]?.toString() ?? '0',
+    image: json["image"] ?? '',
+    deadline: DateTime.tryParse(json["deadline"] ?? ''),
+    reamainingTime: DateTime.tryParse(json["reamaining_time"]?.toString() ?? ''),
+    titleAr: json["title_ar"],
+    price: json["price"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "title": title,
-        "raised": raised,
-        "amount": amount,
-        "image": image,
-      };
+    "id": id,
+    "title": title,
+    "raised": raised,
+    "amount": amount,
+    "image": image,
+    "deadline": deadline?.toIso8601String(),
+    "reamaining_time": reamainingTime?.toIso8601String(),
+    "title_ar": titleAr,
+    "price": price,
+  };
 }
+
 
 class Link {
   Link({
