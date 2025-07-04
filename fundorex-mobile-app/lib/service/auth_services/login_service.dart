@@ -33,7 +33,7 @@ class LoginService with ChangeNotifier {
     if (connection) {
       setLoadingTrue();
       var data = jsonEncode({
-        'email': email,
+        'login': email,
         'password': pass,
       });
       var header = {

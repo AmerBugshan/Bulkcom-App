@@ -36,7 +36,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
     final lnProvider = Provider.of<AppStringService>(context, listen: false);
 
     var appbarTxt = Provider.of<AppStringService>(context, listen: false)
-        .getString('Support tickets');
+        .getString('اقتراحاتي');
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -87,7 +87,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                           color: cc.primaryColor,
                           borderRadius: BorderRadius.circular(8)),
                       child: AutoSizeText(
-                        ln.getString('Create'),
+                        ln.getString('اضافة'),
                         maxLines: 1,
                         style: const TextStyle(
                           color: Colors.white,

@@ -20,10 +20,10 @@ List menuNamesList = [
   MenuNames('Events Booking', 'assets/svg/event.svg'),
   MenuNames('All Donations', 'assets/svg/donations.svg'),
   MenuNames('Following User Campaigns', 'assets/svg/following.svg'),
-  MenuNames('All Support Ticket', 'assets/svg/support-ticket.svg'),
+  MenuNames('اقتراح منتج جديد', 'assets/svg/support-ticket.svg'),
   MenuNames('Reward Points', 'assets/svg/rewards.svg'),
-  MenuNames('Create campaign', 'assets/svg/following.svg'),
-  MenuNames('My campaigns', 'assets/svg/following.svg'),
+  // MenuNames('Create campaign', 'assets/svg/following.svg'),
+  // MenuNames('My campaigns', 'assets/svg/following.svg'),
 ];
 
 getNavLink(int i, BuildContext context) {
@@ -69,19 +69,20 @@ getNavLink(int i, BuildContext context) {
         builder: (BuildContext context) => const RewardPointsPage(),
       ),
     );
-  } else if (i == 6) {
-    return Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const CreateCampaignPage(),
-      ),
-    );
-  } else if (i == 7) {
-    return Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const MyCampaignsPage(),
-      ),
-    );
-  }
+    }
+    // else if (i == 6) {
+  //   return Navigator.push(
+  //     context,
+  //     MaterialPageRoute<void>(
+  //       builder: (BuildContext context) => const CreateCampaignPage(),
+  //     ),
+  //   );
+  // } else if (i == 7) {
+  //   return Navigator.push(
+  //     context,
+  //     MaterialPageRoute<void>(
+  //       builder: (BuildContext context) => const MyCampaignsPage(),
+  //     ),
+  //   );
+  // }
 }
