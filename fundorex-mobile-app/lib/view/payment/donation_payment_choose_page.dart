@@ -284,7 +284,7 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
                           }, isloading: dProvider.isloading),
                           sizedBoxCustom(40)
                         ],
-                      );
+                      );//
                     },
                   ),
                 ),
