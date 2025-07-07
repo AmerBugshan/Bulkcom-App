@@ -22,7 +22,7 @@ class DonationsListPage extends StatelessWidget {
 
     ConstantColors cc = ConstantColors();
     return Scaffold(
-      appBar: CommonHelper().appbarCommon('All donations', context, () {
+      appBar: CommonHelper().appbarCommon('مشترياتي', context, () {
         Navigator.pop(context);
       }, bgColor: Colors.white),
       backgroundColor: cc.bgGrey,
@@ -123,7 +123,7 @@ class DonationsListPage extends StatelessWidget {
                       : Container(
                           alignment: Alignment.center,
                           height: screenHeight - 130,
-                          child: Text(ln.getString('No donation record found')),
+                          child: Text(ln.getString('لم تقم بطلب أي منتج بعد')),
                         ),
             ),
           ),

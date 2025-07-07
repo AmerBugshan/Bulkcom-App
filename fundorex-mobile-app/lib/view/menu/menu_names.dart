@@ -16,12 +16,13 @@ class MenuNames {
 }
 
 List menuNamesList = [
-  MenuNames('Dashboard', 'assets/svg/dashboard.svg'),
-  MenuNames('Events Booking', 'assets/svg/event.svg'),
-  MenuNames('All Donations', 'assets/svg/donations.svg'),
-  MenuNames('Following User Campaigns', 'assets/svg/following.svg'),
+  MenuNames('لوحة التحكم', 'assets/svg/dashboard.svg'),
+  // MenuNames('حجز الفعاليات', 'assets/svg/event.svg'),
+  MenuNames('مشترياتي', 'assets/svg/donations.svg'),
+  MenuNames('الحملات المتابعة', 'assets/svg/following.svg'),
   MenuNames('اقتراح منتج جديد', 'assets/svg/support-ticket.svg'),
-  MenuNames('Reward Points', 'assets/svg/rewards.svg'),
+  // MenuNames('نقاط المكافأة', 'assets/svg/rewards.svg'),
+
   // MenuNames('Create campaign', 'assets/svg/following.svg'),
   // MenuNames('My campaigns', 'assets/svg/following.svg'),
 ];
@@ -34,41 +35,41 @@ getNavLink(int i, BuildContext context) {
         builder: (BuildContext context) => const DashboardPage(),
       ),
     );
+  // } else if (i == 1) {
+  //   return Navigator.push(
+  //     context,
+  //     MaterialPageRoute<void>(
+  //       builder: (BuildContext context) => const EventsBookingsPage(),
+  //     ),
+  //   );
   } else if (i == 1) {
-    return Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const EventsBookingsPage(),
-      ),
-    );
-  } else if (i == 2) {
     return Navigator.push(
       context,
       MaterialPageRoute<void>(
         builder: (BuildContext context) => const DonationsListPage(),
       ),
     );
-  } else if (i == 3) {
+  } else if (i == 2) {
     return Navigator.push(
       context,
       MaterialPageRoute<void>(
         builder: (BuildContext context) => const FollowedUserListPage(),
       ),
     );
-  } else if (i == 4) {
+  } else if (i == 3) {
     return Navigator.push(
       context,
       MaterialPageRoute<void>(
         builder: (BuildContext context) => const MyTicketsPage(),
       ),
     );
-  } else if (i == 5) {
-    return Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const RewardPointsPage(),
-      ),
-    );
+  // } else if (i == 4) {
+  //   return Navigator.push(
+  //     context,
+  //     MaterialPageRoute<void>(
+  //       builder: (BuildContext context) => const RewardPointsPage(),
+  //     ),
+  //   );
     }
     // else if (i == 6) {
   //   return Navigator.push(

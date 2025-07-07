@@ -40,7 +40,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     var screenHeight = MediaQuery.of(context).size.height;
     ConstantColors cc = ConstantColors();
     return Scaffold(
-      appBar: CommonHelper().appbarCommon('Change Password', context, () {
+      appBar: CommonHelper().appbarCommon('تغيير كلمة المرور', context, () {
         Navigator.pop(context);
       }),
       backgroundColor: Colors.white,
@@ -67,7 +67,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         //New password =========================>
-                        CommonHelper().labelCommon("ادخل الرقم السري الحالي"),
+                        CommonHelper().labelCommon("ادخل كلمة المرور الحالية"),
 
                         Container(
                             margin: const EdgeInsets.only(bottom: 19),
@@ -140,13 +140,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                           color:
                                               ConstantColors().primaryColor)),
                                   hintText:
-                                      ln.getString('Enter current password'),
+                                      ln.getString('ادخل كلمة المرور الحالية'),
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 18)),
                             )),
 
                         //New password =========================>
-                        CommonHelper().labelCommon("Enter new password"),
+                        CommonHelper().labelCommon("ادخل كلمة المرور الجديدة"),
 
                         Container(
                             margin: const EdgeInsets.only(bottom: 19),
@@ -212,13 +212,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                       borderSide: BorderSide(
                                           color:
                                               ConstantColors().primaryColor)),
-                                  hintText: ln.getString('New password'),
+                                  hintText: ln.getString('كلمة مرور جديدة'),
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 18)),
                             )),
 
                         //Repeat New password =========================>
-                        CommonHelper().labelCommon("Repeat new password"),
+                        CommonHelper().labelCommon("اعد كتابة كلمة المرور الجديدة"),
 
                         Container(
                             margin: const EdgeInsets.only(bottom: 19),
@@ -233,7 +233,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return ln
-                                      .getString('Please retype your password');
+                                      .getString('اعد كتابة كلمة المرور الجديدة');
                                 }
                                 return null;
                               },
@@ -288,7 +288,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                       borderSide: BorderSide(
                                           color:
                                               ConstantColors().primaryColor)),
-                                  hintText: ln.getString('Retype new password'),
+                                  hintText: ln.getString('اعد كتابة كلمة المرور الجديدة'),
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 18)),
                             )),
@@ -299,7 +299,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         ),
                         Consumer<ChangePassService>(
                           builder: (context, provider, child) => CommonHelper()
-                              .buttonPrimary("تغيير الرقم السري", () {
+                              .buttonPrimary("تغيير كلمة المرور", () {
                             if (provider.isloading == false) {
                               if (_formKey.currentState!.validate()) {
                                 provider.changePassword(

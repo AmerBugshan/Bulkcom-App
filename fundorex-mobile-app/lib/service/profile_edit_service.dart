@@ -102,7 +102,7 @@ class ProfileEditService with ChangeNotifier {
 
     if ((response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300) {
       setLoadingFalse();
-      OthersHelper().showToast('Profile updated successfully', Colors.black);
+      OthersHelper().showToast('تم تحديث الملف الشخصي بنجاح.', Colors.black);
 
       await Provider.of<ProfileService>(context, listen: false)
           .getProfileDetails(isFromProfileupdatePage: true);
@@ -110,7 +110,7 @@ class ProfileEditService with ChangeNotifier {
     } else {
       setLoadingFalse();
       print(response.data);
-      OthersHelper().showToast('Something went wrong', Colors.black);
+      OthersHelper().showToast('حدث خطأ', Colors.black);
       return false;
     }
   }

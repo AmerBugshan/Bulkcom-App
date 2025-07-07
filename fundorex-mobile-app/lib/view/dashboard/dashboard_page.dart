@@ -24,7 +24,7 @@ class DashboardPage extends StatelessWidget {
 
     ConstantColors cc = ConstantColors();
     return Scaffold(
-      appBar: CommonHelper().appbarCommon('Dashboard', context, () {
+      appBar: CommonHelper().appbarCommon('لوحة التحكم', context, () {
         Navigator.pop(context);
         Provider.of<AllDonationsService>(context, listen: false).setDefault();
       }, bgColor: Colors.white),
@@ -55,7 +55,7 @@ class DashboardPage extends StatelessWidget {
                                   sizedBoxCustom(30),
                                   SectionTitle(
                                     cc: cc,
-                                    title: ln.getString('Recent donations'),
+                                    title: ln.getString('المشتريات الأخيرة'),
                                     hasSeeAllBtn: false,
                                     pressed: () {},
                                   ),
@@ -114,7 +114,7 @@ class DashboardPage extends StatelessWidget {
                             alignment: Alignment.center,
                             height: screenHeight - 130,
                             child:
-                                Text(ln.getString('No donation record found')),
+                                Text(ln.getString('لم تقم بطلب أي منتج بعد')),
                           ),
                   ),
                 ],

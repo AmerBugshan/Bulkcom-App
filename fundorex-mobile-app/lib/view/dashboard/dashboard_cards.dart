@@ -31,7 +31,7 @@ class DashboardCards extends StatelessWidget {
                         crossAxisSpacing: 15,
                         height: 80),
                     padding: const EdgeInsets.only(top: 30),
-                    itemCount: 4,
+                    itemCount: dCardsList.length,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
@@ -94,8 +94,9 @@ class Dcards {
 }
 
 List dCardsList = [
-  Dcards('Events booking', 'assets/svg/event-circle.svg'),
-  Dcards('Total donations', 'assets/svg/donations-circle.svg'),
-  Dcards('Total campaign', 'assets/svg/campaign-circle.svg'),
-  Dcards('Total reward pts', 'assets/svg/rewards-circle.svg'),
+  // Dcards('Events booking', 'assets/svg/event-circle.svg'),
+  Dcards('عدد مشترياتي', 'assets/svg/donations-circle.svg'),
+  Dcards('عدد المنتجات المقترحة', 'assets/svg/campaign-circle.svg'),
+
+  // Dcards('Total reward pts', 'assets/svg/rewards-circle.svg'),
 ];

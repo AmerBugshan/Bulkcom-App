@@ -21,7 +21,7 @@ class FollowedUserListPage extends StatelessWidget {
     ConstantColors cc = ConstantColors();
     return Scaffold(
       appBar:
-          CommonHelper().appbarCommon('Following user campaigns', context, () {
+          CommonHelper().appbarCommon('الحملات المتابعة', context, () {
         Navigator.pop(context);
       }, bgColor: Colors.white),
       backgroundColor: cc.bgGrey,

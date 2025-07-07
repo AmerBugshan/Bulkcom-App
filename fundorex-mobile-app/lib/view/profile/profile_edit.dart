@@ -89,12 +89,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     ConstantColors cc = ConstantColors();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CommonHelper().appbarCommon('Edit profile', context, () {
+      appBar: CommonHelper().appbarCommon('تعديل الملف الشخصي', context, () {
         if (Provider.of<ProfileEditService>(context, listen: false).isloading ==
             false) {
           Navigator.pop(context);
         } else {
-          var txt = 'Please wait while the profile is updating';
+          var txt = 'يرجى الانتظار أثناء تحديث الملف الشخصي';
           txt = Provider.of<AppStringService>(context, listen: false)
               .getString(txt);
           OthersHelper().showToast(txt, Colors.black);
@@ -115,7 +115,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   return Future.value(true);
                 } else {
                   OthersHelper().showToast(
-                      ln.getString('Please wait while the profile is updating'),
+                      ln.getString('يرجى الانتظار أثناء تحديث الملف الشخصي'),
                       Colors.black);
                   return Future.value(false);
                 }
@@ -202,7 +202,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           //Name ============>
-                          CommonHelper().labelCommon("Full name"),
+                          CommonHelper().labelCommon("الاسم الكامل"),
 
                           CustomInput(
                             controller: fullNameController,
@@ -210,11 +210,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                             validation: (value) {
                               if (value == null || value.isEmpty) {
                                 return ln
-                                    .getString('Please enter your full name');
+                                    .getString('يرجى إدخال اسمك الكامل');
                               }
                               return null;
                             },
-                            hintText: ln.getString("Enter your full name"),
+                            hintText: ln.getString("يرجى إدخال اسمك الكامل"),
                             textInputAction: TextInputAction.next,
                           ),
                           const SizedBox(
@@ -222,18 +222,18 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           ),
 
                           //Email ============>
-                          CommonHelper().labelCommon("Email"),
+                          CommonHelper().labelCommon("البريد الإلكتروني"),
 
                           CustomInput(
                             controller: emailController,
                             paddingHorizontal: 18,
                             validation: (value) {
                               if (value == null || value.isEmpty) {
-                                return ln.getString('Please enter your email');
+                                return ln.getString('يرجى إدخال البريد الإلكتروني');
                               }
                               return null;
                             },
-                            hintText: ln.getString("Enter your email"),
+                            hintText: ln.getString("يرجى إدخال البريد الإلكتروني"),
                             textInputAction: TextInputAction.next,
                           ),
 
@@ -242,18 +242,18 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           ),
 
                           //Phone ============>
-                          CommonHelper().labelCommon("Phone"),
+                          CommonHelper().labelCommon("رقم الجوال"),
 
                           CustomInput(
                             controller: phoneController,
                             paddingHorizontal: 18,
                             validation: (value) {
                               if (value == null || value.isEmpty) {
-                                return ln.getString('Please enter your phone');
+                                return ln.getString('يرجى إدخال رقم الجوال');
                               }
                               return null;
                             },
-                            hintText: ln.getString("Enter your phone"),
+                            hintText: ln.getString("ادخل رقم الجوال"),
                             textInputAction: TextInputAction.next,
                             isNumberField: true,
                           ),
@@ -314,18 +314,18 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           ),
 
                           //state ============>
-                          CommonHelper().labelCommon("State"),
+                          CommonHelper().labelCommon("المنطقة"),
 
                           CustomInput(
                             controller: stateController,
                             paddingHorizontal: 18,
                             validation: (value) {
                               if (value == null || value.isEmpty) {
-                                return ln.getString('Please enter your state');
+                                return ln.getString('يرجى إدخال المنطقة');
                               }
                               return null;
                             },
-                            hintText: ln.getString("Enter your state"),
+                            hintText: ln.getString("ادخل اسم المنطقة"),
                             textInputAction: TextInputAction.next,
                           ),
 
@@ -334,18 +334,18 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           ),
 
                           //zip ============>
-                          CommonHelper().labelCommon("Zip"),
+                          CommonHelper().labelCommon("الرمز البريدي"),
 
                           CustomInput(
                             controller: zipController,
                             paddingHorizontal: 18,
                             validation: (value) {
                               if (value == null || value.isEmpty) {
-                                return ln.getString('Please enter your zip');
+                                return ln.getString('يرجى إدخال الرمز البريدي');
                               }
                               return null;
                             },
-                            hintText: ln.getString("Enter your zip"),
+                            hintText: ln.getString("ادخل الرمز البريدي"),
                             textInputAction: TextInputAction.next,
                           ),
 
@@ -354,7 +354,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           ),
 
                           //address ============>
-                          CommonHelper().labelCommon("Address"),
+                          CommonHelper().labelCommon("العنوان"),
 
                           CustomInput(
                             controller: addressController,
@@ -362,11 +362,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                             validation: (value) {
                               if (value == null || value.isEmpty) {
                                 return ln
-                                    .getString('Please enter your address');
+                                    .getString('يرجى إدخال العنوان');
                               }
                               return null;
                             },
-                            hintText: ln.getString("Enter your address"),
+                            hintText: ln.getString("ادخل اسم العنوان"),
                             textInputAction: TextInputAction.next,
                           ),
                         ],
@@ -375,16 +375,16 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       const SizedBox(
                         height: 15,
                       ),
-                      CommonHelper().buttonPrimary('Save', () async {
+                      CommonHelper().buttonPrimary('حفظ', () async {
                         if (provider.isloading == false) {
                           if (addressController.text.isEmpty) {
                             OthersHelper().showToast(
-                                ln.getString('Address field is required'),
+                                ln.getString('حقل العنوان مطلوب'),
                                 Colors.black);
                             return;
                           } else if (phoneController.text.isEmpty) {
                             OthersHelper().showToast(
-                                ln.getString('Phone field is required'),
+                                ln.getString('حقل رقم الجوال مطلوب'),
                                 Colors.black);
                             return;
                           }
@@ -392,7 +392,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                               Overlay.of(context),
                               CustomSnackBar.success(
                                 message: ln.getString(
-                                    "Updating profile...It may take few seconds"),
+                                    "تحديث الملف الشخصي... قد يستغرق ذلك بضع ثوانٍ."),
                               ),
                               persistent: true,
                               onAnimationControllerInit: (controller) =>

@@ -61,7 +61,7 @@ class _HomepageState extends State<Homepage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      ln.getString('Hello') + ',',
+                                      ln.getString('مرحبا!') + ',',
                                       style: TextStyle(
                                         color: cc.greyParagraph,
                                         fontSize: 13,

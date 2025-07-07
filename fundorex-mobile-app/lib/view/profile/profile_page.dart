@@ -243,7 +243,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: SingleMenuItem(
                                   cc: cc,
                                   iconSvg: 'assets/svg/password.svg',
-                                  title: 'Change Password',
+                                  title: 'تغيير كلمة المرور',
                                 ),
                               ),
 
@@ -253,7 +253,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onTap: () {
                                   Alerts().confirmationAlert(
                                     context: context,
-                                    title: "Are you sure",
+                                    title: "هل انت متأكد؟",
                                     onConfirm: () async {
                                       Provider.of<AccountDeleteService>(context,
                                               listen: false)
@@ -262,7 +262,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       await Future.delayed(
                                           const Duration(seconds: 1));
                                     },
-                                    buttonText: "Delete",
+                                    buttonText: "احذف",
                                     buttonColor: cc.warningColor,
                                   );
                                   // context.toNamed(AccountDeleteView.routeName);
@@ -270,7 +270,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: SingleMenuItem(
                                   cc: cc,
                                   iconSvg: 'assets/svg/trash.svg',
-                                  title: 'Delete Account',
+                                  title: 'حذف الحساب',
                                 ),
                               ),
                               sizedBoxCustom(15),
@@ -281,7 +281,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: SingleMenuItem(
                                   cc: cc,
                                   iconSvg: 'assets/svg/exit.svg',
-                                  title: 'Log Out',
+                                  title: 'تسجيل خروج',
                                 ),
                               ),
 
