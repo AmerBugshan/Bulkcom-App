@@ -55,6 +55,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'service/account_delete_service.dart';
 import 'view/utils/constant_colors.dart';
+import 'package:fundorex/view/auth/login/login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -154,7 +155,7 @@ class MyApp extends StatelessWidget {
             checkboxTheme: DefaultThemes().checkboxTheme(),
           ),
           home: child,
-          routes: {WebViewScreen.routeName: (_) => const WebViewScreen()},
+          routes: {WebViewScreen.routeName: (_) => const WebViewScreen(),'/login': (_) => const LoginPage(),},
         ),
         child: const SplashScreen(),
       ),

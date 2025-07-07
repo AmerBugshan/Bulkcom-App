@@ -40,22 +40,25 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
   void initState() {
     super.initState();
 
-    nameController.text = Provider.of<ProfileService>(context, listen: false)
-        .profileDetails
-        ?.name ??
-        '';
-    emailController.text = Provider.of<ProfileService>(context, listen: false)
-        .profileDetails
-        ?.email ??
-        '';
-    phoneController.text = Provider.of<ProfileService>(context, listen: false)
-        .profileDetails
-        ?.phone ??
-        '';
+    final profile = Provider.of<ProfileService>(context, listen: false).profileDetails;
+
+    // If user is not signed in, redirect to login page
+    if (profile == null) {
+      Future.microtask(() {
+        Navigator.pushReplacementNamed(context, '/login');  // Adjust this route to your login/signup page
+      });
+      return; // Prevent further code execution
+    }
+
+    // Existing init code:
+    nameController.text = profile.name ?? '';
+    emailController.text = profile.email ?? '';
+    phoneController.text = profile.phone ?? '';
     customAmountController.text =
         Provider.of<DonateService>(context, listen: false)
             .defaultDonateAmount ??
             '1';
+
 
     amountIndex = Provider.of<DonateService>(context, listen: false)
         .defaultDonateAmount !=
