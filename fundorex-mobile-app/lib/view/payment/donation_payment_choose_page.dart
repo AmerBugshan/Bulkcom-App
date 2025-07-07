@@ -105,10 +105,10 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CommonHelper().labelCommon("Or enter an amount"),
+                          CommonHelper().labelCommon("الكمية"),
                           CustomInput(
                             controller: customAmountController,
-                            hintText: "Amount",
+                            hintText: "كمية المنتج",
                             isNumberField: true,
                             paddingHorizontal: 20,
                               onChanged: (v) {

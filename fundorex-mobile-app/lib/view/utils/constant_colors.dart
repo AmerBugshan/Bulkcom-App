@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 final cc = ConstantColors();
 
 class ConstantColors {
-  final Color primaryColor = const Color(0xff0FC393);
-  final Color secondaryColor = const Color(0xffFF8D29);
+  final Color primaryColor = const Color(0xFF000000);
+  final Color secondaryColor = const Color(0x1D365CFF);
   final Color orangeColor = const Color(0xffFF6B2C);
   final Color bgGrey = const Color.fromARGB(255, 244, 244, 245);
   final Color successColor = const Color(0xff65C18C);
