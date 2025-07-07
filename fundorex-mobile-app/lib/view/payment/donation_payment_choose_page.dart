@@ -41,25 +41,25 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
     super.initState();
 
     nameController.text = Provider.of<ProfileService>(context, listen: false)
-            .profileDetails
-            ?.name ??
+        .profileDetails
+        ?.name ??
         '';
     emailController.text = Provider.of<ProfileService>(context, listen: false)
-            .profileDetails
-            ?.email ??
+        .profileDetails
+        ?.email ??
         '';
     phoneController.text = Provider.of<ProfileService>(context, listen: false)
-            .profileDetails
-            ?.phone ??
+        .profileDetails
+        ?.phone ??
         '';
     customAmountController.text =
         Provider.of<DonateService>(context, listen: false)
-                .defaultDonateAmount ??
+            .defaultDonateAmount ??
             '0';
 
     amountIndex = Provider.of<DonateService>(context, listen: false)
-                .defaultDonateAmount !=
-            null
+        .defaultDonateAmount !=
+        null
         ? -1
         : 0;
 
@@ -95,560 +95,198 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
             child: Consumer<RtlService>(
               builder: (context, rtlP, child) => Consumer<AppStringService>(
                 builder: (context, ln, child) => Consumer<PaymentChooseService>(
-                  builder: (context, pgProvider, child) => pgProvider
-                          .paymentList.isNotEmpty
-                      ? Consumer<DonateService>(
-                          builder: (context, dProvider, child) {
-                            return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                  builder: (context, pgProvider, child) => Consumer<DonateService>(
+                    builder: (context, dProvider, child) {
+                      final manualPayment = pgProvider.paymentList.firstWhere(
+                            (e) => e['name'] == 'manual_payment',
+                        orElse: () => null,
+                      );
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CommonHelper().labelCommon("Or enter an amount"),
+                          CustomInput(
+                            controller: customAmountController,
+                            hintText: "Amount",
+                            isNumberField: true,
+                            paddingHorizontal: 20,
+                            onChanged: (v) {
+                              amountIndex = -1;
+                              if (v.isNotEmpty) {
+                                dProvider.setDonationAmount(v);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                          CommonHelper().labelCommon("Name"),
+                          CustomInput(
+                            controller: nameController,
+                            hintText: ln.getString("Name"),
+                            paddingHorizontal: 20,
+                          ),
+                          const SizedBox(height: 8),
+                          CommonHelper().labelCommon("Email"),
+                          CustomInput(
+                            controller: emailController,
+                            hintText: ln.getString("Email"),
+                            paddingHorizontal: 20,
+                            marginBottom: 10,
+                          ),
+                          CommonHelper().labelCommon("Phone"),
+                          CustomInput(
+                            controller: phoneController,
+                            hintText: ln.getString("Phone"),
+                            paddingHorizontal: 20,
+                            marginBottom: 10,
+                          ),
+                          CheckboxListTile(
+                            checkColor: Colors.white,
+                            activeColor: cc.primaryColor,
+                            contentPadding: const EdgeInsets.all(0),
+                            title: Text(
+                              ln.getString('Donate anonymously'),
+                              style: TextStyle(
+                                  color: cc.greyFour,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14),
+                            ),
+                            value: annonymusDonate,
+                            onChanged: (newValue) {
+                              setState(() {
+                                annonymusDonate = !annonymusDonate;
+                              });
+                            },
+                            controlAffinity: ListTileControlAffinity.leading,
+                          ),
+                          const DonationDetails(),
+
+                          if (manualPayment != null) ...[
+                            CommonHelper().labelCommon("Choose payment method"),
+                            const SizedBox(height: 16),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedMethod = pgProvider.paymentList.indexOf(manualPayment);
+                                });
+
+                                pgProvider.setKey('manual_payment', selectedMethod);
+                              },
+                              child: Stack(
+                                clipBehavior: Clip.none,
                                 children: [
-                                  Consumer<CampaignDetailsService>(
-                                      builder: (context, cd, child) {
-                                    return cd.campaignDetails?.rewardInfo ==
-                                            null
-                                        ? const SizedBox()
-                                        : ListTile(
-                                            tileColor: cc.orangeColor
-                                                .withOpacity(0.10),
-                                            leading: Image.network(
-                                              cd.campaignDetails.rewardInfo
-                                                  .image
-                                                  .toString(),
-                                              errorBuilder: (c, _, s) => Icon(
-                                                Icons.celebration_outlined,
-                                                color: cc.orangeColor,
-                                              ),
-                                            ),
-                                            title: Text(
-                                              cd.campaignDetails.rewardInfo
-                                                  .heading
-                                                  .toString()
-                                                  .tr(),
-                                              style: context.titleMedium?.bold6
-                                                  .copyWith(
-                                                color: cc.orangeColor,
-                                              ),
-                                            ),
-                                            subtitle: cd.campaignDetails
-                                                        .rewardInfo.amount ==
-                                                    null
-                                                ? null
-                                                : Text(
-                                                    "${cd.campaignDetails.rewardInfo.title.toString().tr()}: ${(cd.campaignDetails.rewardInfo.amount as num?)?.cur} ${cd.campaignDetails.rewardInfo.maxAmount == null ? "" : "${"below".tr()}: ${(cd.campaignDetails.rewardInfo.maxAmount as num?)?.cur}"}"),
-                                          );
-                                  }),
-                                  12.toHeight,
-                                  dProvider.amounts.isNotEmpty
-                                      ? Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            if (dProvider.minimumDonateAmount !=
-                                                0)
-                                              Container(
-                                                margin: const EdgeInsets.only(
-                                                    bottom: 8),
-                                                child: Text(
-                                                  ln.getString(
-                                                          "Minimum donation amount") +
-                                                      ': ${dProvider.minimumDonateAmount}',
-                                                  textAlign: TextAlign.start,
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    color: cc.secondaryColor,
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
-                                              ),
-                                            CommonHelper()
-                                                .labelCommon("Pick an amount"),
-                                            Container(
-                                              margin:
-                                                  const EdgeInsets.only(top: 5),
-                                              height: 55,
-                                              child: ListView(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                shrinkWrap: true,
-                                                clipBehavior: Clip.none,
-                                                children: [
-                                                  for (int i = 0;
-                                                      i <
-                                                          dProvider
-                                                              .amounts.length;
-                                                      i++)
-                                                    InkWell(
-                                                      splashColor:
-                                                          Colors.transparent,
-                                                      highlightColor:
-                                                          Colors.transparent,
-                                                      onTap: () {
-                                                        if (amountIndex == i) {
-                                                          return;
-                                                        }
-
-                                                        customAmountController
-                                                                .text =
-                                                            dProvider
-                                                                .amounts[i];
-
-                                                        dProvider
-                                                            .setDonationAmount(
-                                                                dProvider
-                                                                    .amounts[i]);
-
-                                                        setState(() {
-                                                          amountIndex = i;
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 18),
-                                                        margin: const EdgeInsets
-                                                            .only(right: 20),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(4),
-                                                          color: amountIndex ==
-                                                                  i
-                                                              ? cc.primaryColor
-                                                              : cc.greySecondary,
-                                                        ),
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Text(
-                                                          "${rtlP.currency}${dProvider.amounts[i]}",
-                                                          style: TextStyle(
-                                                              color: amountIndex !=
-                                                                      i
-                                                                  ? cc.greyFour
-                                                                  : Colors
-                                                                      .white,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 18),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : Container(),
-
-                                  sizedBoxCustom(20),
-                                  //Name ============>
-                                  CommonHelper()
-                                      .labelCommon("Or enter an amount"),
-
-                                  CustomInput(
-                                    controller: customAmountController,
-                                    hintText: "Amount",
-                                    textInputAction: TextInputAction.next,
-                                    isNumberField: true,
-                                    paddingHorizontal: 20,
-                                    onChanged: (v) {
-                                      print(v);
-                                      amountIndex = -1;
-                                      if (v.isNotEmpty) {
-                                        dProvider.setDonationAmount(v);
-                                      } else {
-                                        OthersHelper().showToast(
-                                            ln.getString(
-                                                'Amount must be greater than zero'),
-                                            cc.warningColor);
-                                      }
-                                    },
-                                  ),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-
-                                  //Name ============>
-                                  CommonHelper().labelCommon("Name"),
-
-                                  CustomInput(
-                                    controller: nameController,
-                                    validation: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return ln.getString(
-                                            'Please enter your name');
-                                      }
-                                      return null;
-                                    },
-                                    hintText: ln.getString("Name"),
-                                    textInputAction: TextInputAction.next,
-                                    paddingHorizontal: 20,
-                                  ),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-
-                                  //Name ============>
-                                  CommonHelper().labelCommon("Email"),
-
-                                  CustomInput(
-                                    controller: emailController,
-                                    validation: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return ln.getString(
-                                            'Please enter your email');
-                                      }
-                                      return null;
-                                    },
-                                    hintText: ln.getString("Email"),
-                                    textInputAction: TextInputAction.next,
-                                    paddingHorizontal: 20,
-                                    marginBottom: 10,
-                                  ),
-                                  CommonHelper().labelCommon("Phone"),
-
-                                  CustomInput(
-                                    controller: phoneController,
-                                    validation: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return ln.getString(
-                                            'Please enter your phone');
-                                      }
-                                      return null;
-                                    },
-                                    hintText: ln.getString("Phone"),
-                                    textInputAction: TextInputAction.next,
-                                    paddingHorizontal: 20,
-                                    marginBottom: 10,
-                                  ),
-
-                                  CheckboxListTile(
-                                    checkColor: Colors.white,
-                                    activeColor: ConstantColors().primaryColor,
-                                    contentPadding: const EdgeInsets.all(0),
-                                    title: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5),
-                                      child: Text(
-                                        ln.getString('Donate anonymously'),
-                                        style: TextStyle(
-                                            color: ConstantColors().greyFour,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 60,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: selectedMethod == pgProvider.paymentList.indexOf(manualPayment)
+                                            ? cc.primaryColor
+                                            : cc.borderColor,
                                       ),
                                     ),
-                                    value: annonymusDonate,
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        annonymusDonate = !annonymusDonate;
-                                      });
-                                    },
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
+                                    child: CachedNetworkImage(
+                                      imageUrl: manualPayment['logo_link'],
+                                      errorWidget: (context, url, error) => Image.asset(
+                                        'assets/images/bank_transfer.png',
+                                        height: 40,
+                                      ),
+                                    ),
                                   ),
+                                  if (selectedMethod == pgProvider.paymentList.indexOf(manualPayment))
+                                    Positioned(
+                                      right: -7,
+                                      top: -9,
+                                      child: CommonHelper().checkCircle(),
+                                    ),
+                                ],
+                              ),
+                            ),
 
-                                  const DonationDetails(),
+                            Consumer<BankTransferService>(
+                              builder: (context, btProvider, child) => Column(
+                                children: [
+                                  if (manualPayment['description'] != null) ...[
+                                    12.toHeight,
+                                    Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                          color: cc.white,
+                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(
+                                            color: cc.borderColor,
+                                          )),
+                                      child: HtmlWidget(manualPayment['description']),
+                                    )
+                                  ],
+                                  const SizedBox(height: 30),
+                                  CommonHelper().buttonPrimary('Choose images', () {
+                                    btProvider.pickImage(context);
+                                  }),
+                                  if (btProvider.pickedImage != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 20),
+                                      child: Image.file(
+                                        File(btProvider.pickedImage.path),
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                ],
+                              ),
+                            ),
+                          ],
 
-                                  //border
-                                  sizedBoxCustom(30),
-                                  CommonHelper()
-                                      .titleCommon('Choose payment method'),
+                          const SizedBox(height: 20),
+                          TacPp(
+                            valueListenable: termsAgree,
+                            tTitle: "Terms & Condition".tr(),
+                            tData: dProvider.dTC,
+                            pTitle: "Privacy policy",
+                            pData: dProvider.dPP,
+                          ),
+                          const SizedBox(height: 14),
+                          CommonHelper().buttonPrimary('Pay & Confirm', () {
+                            if (nameController.text.trim().isEmpty ||
+                                !emailController.text.validateEmail ||
+                                phoneController.text.trim().length < 3 ||
+                                (customAmountController.text.isEmpty &&
+                                    amountIndex < 0) ||
+                                (dProvider.minimumDonateAmount != 0 &&
+                                    (num.parse(customAmountController.text) <
+                                        dProvider.minimumDonateAmount)) ||
+                                !termsAgree.value) {
+                              'Please fill all required fields properly'
+                                  .tr()
+                                  .showToast();
+                              return;
+                            }
 
-                                  //payment method card
-                                  GridView.builder(
-                                    gridDelegate:
-                                        const FlutterzillaFixedGridView(
-                                            crossAxisCount: 3,
-                                            mainAxisSpacing: 15,
-                                            crossAxisSpacing: 15,
-                                            height: 60),
-                                    padding: const EdgeInsets.only(top: 30),
-                                    itemCount: pgProvider.paymentList.length,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    clipBehavior: Clip.none,
-                                    itemBuilder: (context, index) {
-                                      return InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedMethod = index;
-                                          });
+                            dProvider.setUserEnteredNameEmail(
+                                nameController.text, emailController.text);
 
-                                          //set key
-                                          pgProvider.setKey(
-                                              pgProvider.paymentList[
-                                                  selectedMethod]['name'],
-                                              index);
+                            final btProvider =
+                            Provider.of<BankTransferService>(context,
+                                listen: false);
 
-                                          //save selected payment method name
-                                          // Provider.of<BookService>(context,
-                                          //         listen: false)
-                                          //     .setSelectedPayment(pgProvider
-                                          //             .paymentList[selectedMethod]
-                                          //         ['name']);
-                                        },
-                                        child: Stack(
-                                          clipBehavior: Clip.none,
-                                          children: [
-                                            Container(
-                                              width: double.infinity,
-                                              height: 60,
-                                              padding: const EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                    color:
-                                                        selectedMethod == index
-                                                            ? cc.primaryColor
-                                                            : cc.borderColor),
-                                              ),
-                                              child: CachedNetworkImage(
-                                                imageUrl: pgProvider
-                                                        .paymentList[index]
-                                                    ['logo_link'],
-                                                placeholder: (context, url) {
-                                                  return Image.asset(
-                                                      'assets/images/placeholder.png');
-                                                },
-                                                // fit: BoxFit.fitWidth,
-                                              ),
-                                            ),
-                                            selectedMethod == index
-                                                ? Positioned(
-                                                    right: -7,
-                                                    top: -9,
-                                                    child: CommonHelper()
-                                                        .checkCircle())
-                                                : Container()
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-
-                                  selectedMethod != -1
-                                      ? pgProvider.paymentList[selectedMethod]
-                                                  ['name'] ==
-                                              'manual_payment'
-                                          ?
-                                          //pick image ==========>
-                                          Consumer<BankTransferService>(
-                                              builder: (context, btProvider,
-                                                      child) =>
-                                                  Column(
-                                                    children: [
-                                                      if (pgProvider.paymentList[
-                                                                  selectedMethod]
-                                                              ['description'] !=
-                                                          null) ...[
-                                                        12.toHeight,
-                                                        Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(20),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color:
-                                                                      cc.white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              12),
-                                                                  border: Border
-                                                                      .all(
-                                                                    color: cc
-                                                                        .borderColor,
-                                                                  )),
-                                                          child: HtmlWidget(
-                                                              pgProvider.paymentList[
-                                                                          selectedMethod]
-                                                                      [
-                                                                      'description'] ??
-                                                                  ""),
-                                                        )
-                                                      ],
-                                                      //pick image button =====>
-                                                      Column(
-                                                        children: [
-                                                          const SizedBox(
-                                                            height: 30,
-                                                          ),
-                                                          CommonHelper()
-                                                              .buttonPrimary(
-                                                                  'Choose images',
-                                                                  () {
-                                                            btProvider
-                                                                .pickImage(
-                                                                    context);
-                                                          }),
-                                                        ],
-                                                      ),
-                                                      btProvider.pickedImage !=
-                                                              null
-                                                          ? Column(
-                                                              children: [
-                                                                const SizedBox(
-                                                                  height: 30,
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 80,
-                                                                  child:
-                                                                      ListView(
-                                                                    clipBehavior:
-                                                                        Clip.none,
-                                                                    scrollDirection:
-                                                                        Axis.horizontal,
-                                                                    shrinkWrap:
-                                                                        true,
-                                                                    children: [
-                                                                      // for (int i = 0;
-                                                                      //     i <
-                                                                      //         btProvider
-                                                                      //             .images!.length;
-                                                                      //     i++)
-                                                                      InkWell(
-                                                                        onTap:
-                                                                            () {},
-                                                                        child:
-                                                                            Column(
-                                                                          children: [
-                                                                            Container(
-                                                                              margin: const EdgeInsets.only(right: 10),
-                                                                              child: Image.file(
-                                                                                // File(provider.images[i].path),
-                                                                                File(btProvider.pickedImage.path),
-                                                                                height: 80,
-                                                                                width: 80,
-                                                                                fit: BoxFit.cover,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            )
-                                                          : Container(),
-                                                    ],
-                                                  ))
-                                          : Container()
-                                      : Container(),
-
-                                  //Agreement checkbox ===========>
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  TacPp(
-                                    valueListenable: termsAgree,
-                                    tTitle: "Terms & Condition".tr(),
-                                    tData: dProvider.dTC,
-                                    pTitle: "Privacy policy",
-                                    pData: dProvider.dPP,
-                                  ),
-
-                                  //pay button =============>
-                                  const SizedBox(
-                                    height: 14,
-                                  ),
-
-                                  CommonHelper().buttonPrimary('Pay & Confirm',
-                                      () {
-                                    if (nameController.text.trim().isEmpty) {
-                                      'Enter your name'.tr().showToast();
-
-                                      return;
-                                    }
-                                    if (!emailController.text.validateEmail) {
-                                      'Enter a valid email'.tr().showToast();
-
-                                      return;
-                                    }
-                                    if (phoneController.text.trim().length <
-                                        3) {
-                                      'Enter a valid phone'.tr().showToast();
-
-                                      return;
-                                    }
-                                    if (selectedMethod == -1) {
-                                      'Please select a payment method'
-                                          .tr()
-                                          .showToast();
-
-                                      return;
-                                    }
-
-                                    if (customAmountController.text.isEmpty &&
-                                        amountIndex < 0) {
-                                      'Please enter or select an amount'
-                                          .tr()
-                                          .showToast();
-
-                                      return;
-                                    }
-
-                                    if (dProvider.minimumDonateAmount != 0 &&
-                                        (num.parse(
-                                                customAmountController.text) <
-                                            dProvider.minimumDonateAmount)) {
-                                      ('${"Amount must be greater than".tr()} ${dProvider.minimumDonateAmount}')
-                                          .showToast();
-
-                                      return;
-                                    }
-
-                                    if (termsAgree.value == false) {
-                                      'You must agree with the terms and conditions'
-                                          .tr()
-                                          .showToast();
-                                      return;
-                                    }
-                                    if (dProvider.isloading == true) {
-                                      return;
-                                    } else {
-                                      dProvider.setUserEnteredNameEmail(
-                                          nameController.text,
-                                          emailController.text);
-                                      payAction(
-                                          pgProvider.paymentList[selectedMethod]
-                                              ['name'],
-                                          context,
-                                          //if user selected bank transfer
-                                          pgProvider.paymentList[selectedMethod]
-                                                      ['name'] ==
-                                                  'manual_payment'
-                                              ? Provider.of<
-                                                          BankTransferService>(
-                                                      context,
-                                                      listen: false)
-                                                  .pickedImage
-                                              : null,
-                                          campaignId: widget.campaignId,
-                                          name: nameController.text.trim(),
-                                          email: emailController.text.trim(),
-                                          phone: phoneController.text.trim(),
-                                          anonymousDonate: annonymusDonate);
-                                    }
-                                  },
-                                      isloading: dProvider.isloading == false
-                                          ? false
-                                          : true),
-
-                                  sizedBoxCustom(40)
-                                ]);
-                          },
-                        )
-                      : Container(
-                          margin: const EdgeInsets.only(top: 60),
-                          child: OthersHelper().showLoading(cc.primaryColor),
-                        ),
+                            payAction(
+                              'manual_payment',
+                              context,
+                              btProvider.pickedImage,
+                              campaignId: widget.campaignId,
+                              name: nameController.text.trim(),
+                              email: emailController.text.trim(),
+                              phone: phoneController.text.trim(),
+                              anonymousDonate: annonymusDonate,
+                            );
+                          }, isloading: dProvider.isloading),
+                          sizedBoxCustom(40)
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
