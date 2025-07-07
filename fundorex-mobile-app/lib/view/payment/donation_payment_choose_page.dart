@@ -55,7 +55,7 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
     customAmountController.text =
         Provider.of<DonateService>(context, listen: false)
             .defaultDonateAmount ??
-            '0';
+            '1';
 
     amountIndex = Provider.of<DonateService>(context, listen: false)
         .defaultDonateAmount !=
@@ -111,12 +111,21 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
                             hintText: "Amount",
                             isNumberField: true,
                             paddingHorizontal: 20,
-                            onChanged: (v) {
-                              amountIndex = -1;
-                              if (v.isNotEmpty) {
-                                dProvider.setDonationAmount(v);
-                              }
-                            },
+                              onChanged: (v) {
+                                amountIndex = -1;
+                                if (v.isNotEmpty) {
+                                  int enteredAmount = int.tryParse(v) ?? 1;
+                                  if (enteredAmount < 1) {
+                                    customAmountController.text = '1';
+                                    customAmountController.selection = TextSelection.fromPosition(
+                                      TextPosition(offset: customAmountController.text.length),
+                                    );
+                                  } else {
+                                    dProvider.setDonationAmount(v);
+                                  }
+                                }
+                              },
+
                           ),
                           const SizedBox(height: 8),
                           CommonHelper().labelCommon("Name"),
@@ -140,25 +149,28 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
                             paddingHorizontal: 20,
                             marginBottom: 10,
                           ),
-                          CheckboxListTile(
-                            checkColor: Colors.white,
-                            activeColor: cc.primaryColor,
-                            contentPadding: const EdgeInsets.all(0),
-                            title: Text(
-                              ln.getString('Donate anonymously'),
-                              style: TextStyle(
-                                  color: cc.greyFour,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14),
+                          if (false) ...[
+                            CheckboxListTile(
+                              checkColor: Colors.white,
+                              activeColor: cc.primaryColor,
+                              contentPadding: const EdgeInsets.all(0),
+                              title: Text(
+                                ln.getString('Donate anonymously'),
+                                style: TextStyle(
+                                    color: cc.greyFour,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14),
+                              ),
+                              value: annonymusDonate,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  annonymusDonate = !annonymusDonate;
+                                });
+                              },
+                              controlAffinity: ListTileControlAffinity.leading,
                             ),
-                            value: annonymusDonate,
-                            onChanged: (newValue) {
-                              setState(() {
-                                annonymusDonate = !annonymusDonate;
-                              });
-                            },
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
+                          ],
+
                           const DonationDetails(),
 
                           if (manualPayment != null) ...[
