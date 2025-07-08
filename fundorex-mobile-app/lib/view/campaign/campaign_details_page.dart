@@ -245,10 +245,10 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage>
                                         tabs: [
                                           Tab(
                                               text:
-                                                  ln.getString('Description')),
-                                          Tab(text: ln.getString('FAQ')),
-                                          Tab(text: ln.getString('Updates')),
-                                          Tab(text: ln.getString('Comments')),
+                                                  ln.getString('الوصف')),
+                                          Tab(text: ln.getString('الأسئلة شائعة')),
+                                          Tab(text: ln.getString('التحديثات')),
+                                          Tab(text: ln.getString('التعليقات')),
                                         ],
                                       ),
                                       Container(
@@ -267,7 +267,7 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage>
                       : Container(
                           height: screenHeight - 250,
                           alignment: Alignment.center,
-                          child: Text(ln.getString("Something went wrong")))
+                          child: Text(ln.getString("حدث خطأ")))
                   : Center(
                       child: SizedBox(
                           height: screenHeight - 250,
@@ -291,7 +291,7 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage>
               //if date is over
               hasTimeLeft = false;
             }
-            print('time left $hasTimeLeft');
+            print('الوقت المتبقي $hasTimeLeft');
           }
 
           return Container(
@@ -318,8 +318,8 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage>
                             children: [
                               CommonHelper().borderButtonPrimary(
                                   ps.profileDetails == null
-                                      ? "Sign in to comment"
-                                      : "Write a Comment", () {
+                                      ? "سجل لترك تعليق"
+                                      : "اكتب تعليق", () {
                                 if (ps.profileDetails == null) {
                                   Navigator.push(
                                     context,
@@ -347,7 +347,7 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage>
                         })
                       : Container(),
                   CommonHelper().buttonPrimary(
-                      hasTimeLeft ? "Donate" : 'Time expired', () {
+                      hasTimeLeft ? "شارك" : 'انتهى الوقت', () {
                     if (hasTimeLeft == false) {
                       return;
                     }
