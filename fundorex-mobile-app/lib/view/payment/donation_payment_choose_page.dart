@@ -3,17 +3,16 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:flutterzilla_fixed_grid/flutterzilla_fixed_grid.dart';
 import 'package:fundorex/helper/extension/context_extension.dart';
 import 'package:fundorex/helper/extension/int_extension.dart';
 import 'package:fundorex/helper/extension/string_extension.dart';
 import 'package:fundorex/service/app_string_service.dart';
-import 'package:fundorex/service/campaign_details_service.dart';
 import 'package:fundorex/service/donate_service.dart';
 import 'package:fundorex/service/pay_services/bank_transfer_service.dart';
 import 'package:fundorex/service/pay_services/payment_choose_service.dart';
 import 'package:fundorex/service/profile_service.dart';
 import 'package:fundorex/service/rtl_service.dart';
+import 'package:fundorex/service/campaign_details_service.dart';
 import 'package:fundorex/view/payment/components/donation_details.dart';
 import 'package:fundorex/view/utils/common_helper.dart';
 import 'package:fundorex/view/utils/common_styles.dart';
@@ -21,61 +20,22 @@ import 'package:fundorex/view/utils/constant_colors.dart';
 import 'package:fundorex/view/utils/custom_input.dart';
 import 'package:fundorex/view/utils/others_helper.dart';
 import 'package:provider/provider.dart';
-
 import '../../service/pay_services/payment_constants.dart';
 import '../utils/tac_pp.dart';
 
 class DonationPaymentChoosePage extends StatefulWidget {
   const DonationPaymentChoosePage({super.key, required this.campaignId});
-
-  final campaignId;
+  final dynamic campaignId;
 
   @override
-  _DonationPaymentChoosePageState createState() =>
-      _DonationPaymentChoosePageState();
+  _DonationPaymentChoosePageState createState() => _DonationPaymentChoosePageState();
 }
 
 class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
-  @override
-  void initState() {
-    super.initState();
-
-    final profile = Provider.of<ProfileService>(context, listen: false).profileDetails;
-
-    // If user is not signed in, redirect to login page
-    if (profile == null) {
-      Future.microtask(() {
-        Navigator.pushReplacementNamed(context, '/login');  // Adjust this route to your login/signup page
-      });
-      return; // Prevent further code execution
-    }
-
-    // Existing init code:
-    nameController.text = profile.name ?? '';
-    emailController.text = profile.email ?? '';
-    phoneController.text = profile.phone ?? '';
-    customAmountController.text =
-        Provider.of<DonateService>(context, listen: false)
-            .defaultDonateAmount ??
-            '1';
-
-
-    amountIndex = Provider.of<DonateService>(context, listen: false)
-        .defaultDonateAmount !=
-        null
-        ? -1
-        : 0;
-
-    Provider.of<DonateService>(context, listen: false)
-        .calculateInitialDonationAmount();
-    Provider.of<DonateService>(context, listen: false).calculateTips();
-  }
-
   int selectedMethod = -1;
   ValueNotifier<bool> termsAgree = ValueNotifier(false);
   bool annonymusDonate = false;
   late int amountIndex;
-  int amountToDonate = 0;
 
   TextEditingController customAmountController = TextEditingController();
   TextEditingController nameController = TextEditingController();
@@ -83,229 +43,239 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
   TextEditingController phoneController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    final profile = Provider.of<ProfileService>(context, listen: false).profileDetails;
+    if (profile == null) {
+      Future.microtask(() {
+        Navigator.pushReplacementNamed(context, '/login');
+      });
+      return;
+    }
+
+    nameController.text = profile.name ?? '';
+    emailController.text = profile.email ?? '';
+    phoneController.text = profile.phone ?? '';
+    customAmountController.text = '1';
+
+    amountIndex = -1;
+
+    final donateService = Provider.of<DonateService>(context, listen: false);
+    donateService.calculateInitialDonationAmount();
+    donateService.calculateTips();
+  }
+
+  @override
   Widget build(BuildContext context) {
     ConstantColors cc = ConstantColors();
 
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: CommonHelper().appbarCommon('Payment', context, () {
-          Navigator.pop(context);
-        }),
-        body: SingleChildScrollView(
-          physics: physicsCommon,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: screenPadding),
-            child: Consumer<RtlService>(
-              builder: (context, rtlP, child) => Consumer<AppStringService>(
-                builder: (context, ln, child) => Consumer<PaymentChooseService>(
-                  builder: (context, pgProvider, child) => Consumer<DonateService>(
-                    builder: (context, dProvider, child) {
-                      final manualPayment = pgProvider.paymentList.firstWhere(
-                            (e) => e['name'] == 'manual_payment',
-                        orElse: () => null,
-                      );
+      backgroundColor: Colors.white,
+      appBar: CommonHelper().appbarCommon('Payment', context, () {
+        Navigator.pop(context);
+      }),
+      body: SingleChildScrollView(
+        physics: physicsCommon,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: screenPadding),
+          child: Consumer4<RtlService, AppStringService, PaymentChooseService, DonateService>(
+            builder: (context, rtlP, ln, pgProvider, dProvider, child) {
+              final campaignProvider = Provider.of<CampaignDetailsService>(context, listen: false);
+              final campaign = campaignProvider.campaignDetails;
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CommonHelper().labelCommon("الكمية"),
-                          CustomInput(
-                            controller: customAmountController,
-                            hintText: "كمية المنتج",
-                            isNumberField: true,
-                            paddingHorizontal: 20,
-                              onChanged: (v) {
-                                amountIndex = -1;
-                                if (v.isNotEmpty) {
-                                  int enteredAmount = int.tryParse(v) ?? 1;
-                                  if (enteredAmount < 1) {
-                                    customAmountController.text = '1';
-                                    customAmountController.selection = TextSelection.fromPosition(
-                                      TextPosition(offset: customAmountController.text.length),
-                                    );
-                                  } else {
-                                    dProvider.setDonationAmount(v);
-                                  }
-                                }
-                              },
+              final pricePerUnit = num.tryParse(campaign.unitPrice?.toString() ?? '0') ?? 0;
+              final totalAvailable = num.tryParse(campaign.availableQuantity?.toString() ?? '0') ?? 0;
+              final maxAllowed = totalAvailable < 10 ? totalAvailable : 10;
 
-                          ),
-                          const SizedBox(height: 8),
-                          CommonHelper().labelCommon("Name"),
-                          CustomInput(
-                            controller: nameController,
-                            hintText: ln.getString("Name"),
-                            paddingHorizontal: 20,
-                          ),
-                          const SizedBox(height: 8),
-                          CommonHelper().labelCommon("Email"),
-                          CustomInput(
-                            controller: emailController,
-                            hintText: ln.getString("Email"),
-                            paddingHorizontal: 20,
-                            marginBottom: 10,
-                          ),
-                          CommonHelper().labelCommon("Phone"),
-                          CustomInput(
-                            controller: phoneController,
-                            hintText: ln.getString("Phone"),
-                            paddingHorizontal: 20,
-                            marginBottom: 10,
-                          ),
-                          if (false) ...[
-                            CheckboxListTile(
-                              checkColor: Colors.white,
-                              activeColor: cc.primaryColor,
-                              contentPadding: const EdgeInsets.all(0),
-                              title: Text(
-                                ln.getString('Donate anonymously'),
-                                style: TextStyle(
-                                    color: cc.greyFour,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 14),
-                              ),
-                              value: annonymusDonate,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  annonymusDonate = !annonymusDonate;
-                                });
-                              },
-                              controlAffinity: ListTileControlAffinity.leading,
-                            ),
-                          ],
+              final selectedUnits = int.tryParse(customAmountController.text) ?? 1;
+              final limitedUnits = selectedUnits > maxAllowed ? maxAllowed : selectedUnits;
+              final totalCost = pricePerUnit * limitedUnits;
 
-                          const DonationDetails(),
+              final manualPayment = pgProvider.paymentList.firstWhere(
+                    (e) => e['name'] == 'manual_payment',
+                orElse: () => null,
+              );
 
-                          if (manualPayment != null) ...[
-                            CommonHelper().labelCommon("Choose payment method"),
-                            const SizedBox(height: 16),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  selectedMethod = pgProvider.paymentList.indexOf(manualPayment);
-                                });
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CommonHelper().labelCommon("اسم المنتج"),
+                  Text(campaign.titleAr ?? campaign.title ?? '-', style: TextStyle(fontSize: 16)),
+                  10.toHeight,
 
-                                pgProvider.setKey('manual_payment', selectedMethod);
-                              },
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  Container(
-                                    width: double.infinity,
-                                    height: 60,
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: selectedMethod == pgProvider.paymentList.indexOf(manualPayment)
-                                            ? cc.primaryColor
-                                            : cc.borderColor,
-                                      ),
-                                    ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: manualPayment['logo_link'],
-                                      errorWidget: (context, url, error) => Image.asset(
-                                        'assets/images/bank_transfer.png',
-                                        height: 40,
-                                      ),
-                                    ),
-                                  ),
-                                  if (selectedMethod == pgProvider.paymentList.indexOf(manualPayment))
-                                    Positioned(
-                                      right: -7,
-                                      top: -9,
-                                      child: CommonHelper().checkCircle(),
-                                    ),
-                                ],
-                              ),
-                            ),
+                  CommonHelper().labelCommon("سعر الوحدة"),
+                  Text("$pricePerUnit \$", style: TextStyle(fontSize: 16)),
+                  10.toHeight,
 
-                            Consumer<BankTransferService>(
-                              builder: (context, btProvider, child) => Column(
-                                children: [
-                                  if (manualPayment['description'] != null) ...[
-                                    12.toHeight,
-                                    Container(
-                                      padding: const EdgeInsets.all(20),
-                                      decoration: BoxDecoration(
-                                          color: cc.white,
-                                          borderRadius: BorderRadius.circular(12),
-                                          border: Border.all(
-                                            color: cc.borderColor,
-                                          )),
-                                      child: HtmlWidget(manualPayment['description']),
-                                    )
-                                  ],
-                                  const SizedBox(height: 30),
-                                  CommonHelper().buttonPrimary('Choose images', () {
-                                    btProvider.pickImage(context);
-                                  }),
-                                  if (btProvider.pickedImage != null)
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 20),
-                                      child: Image.file(
-                                        File(btProvider.pickedImage.path),
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                ],
-                              ),
-                            ),
-                          ],
+                  CommonHelper().labelCommon("الكمية المتوفرة"),
+                  Text("$totalAvailable (الحد الأقصى: $maxAllowed)", style: TextStyle(fontSize: 16)),
+                  20.toHeight,
 
-                          const SizedBox(height: 20),
-                          TacPp(
-                            valueListenable: termsAgree,
-                            tTitle: "Terms & Condition".tr(),
-                            tData: dProvider.dTC,
-                            pTitle: "Privacy policy",
-                            pData: dProvider.dPP,
-                          ),
-                          const SizedBox(height: 14),
-                          CommonHelper().buttonPrimary('Pay & Confirm', () {
-                            if (nameController.text.trim().isEmpty ||
-                                !emailController.text.validateEmail ||
-                                phoneController.text.trim().length < 3 ||
-                                (customAmountController.text.isEmpty &&
-                                    amountIndex < 0) ||
-                                (dProvider.minimumDonateAmount != 0 &&
-                                    (num.parse(customAmountController.text) <
-                                        dProvider.minimumDonateAmount)) ||
-                                !termsAgree.value) {
-                              'Please fill all required fields properly'
-                                  .tr()
-                                  .showToast();
-                              return;
-                            }
-
-                            dProvider.setUserEnteredNameEmail(
-                                nameController.text, emailController.text);
-
-                            final btProvider =
-                            Provider.of<BankTransferService>(context,
-                                listen: false);
-
-                            payAction(
-                              'manual_payment',
-                              context,
-                              btProvider.pickedImage,
-                              campaignId: widget.campaignId,
-                              name: nameController.text.trim(),
-                              email: emailController.text.trim(),
-                              phone: phoneController.text.trim(),
-                              anonymousDonate: annonymusDonate,
-                            );
-                          }, isloading: dProvider.isloading),
-                          sizedBoxCustom(40)
-                        ],
-                      );//
-                    },
+                  CommonHelper().labelCommon("الكمية المطلوبة"),
+                  CustomInput(
+                    controller: customAmountController,
+                    hintText: "كمية المنتج",
+                    isNumberField: true,
+                    paddingHorizontal: 20,
+                    onChanged: (v) => setState(() {}),
                   ),
-                ),
-              ),
-            ),
+                  10.toHeight,
+
+                  CommonHelper().labelCommon("السعر الإجمالي"),
+                  Text("$totalCost \$", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  20.toHeight,
+
+                  CommonHelper().labelCommon("Name"),
+                  CustomInput(
+                    controller: nameController,
+                    hintText: ln.getString("Name"),
+                    paddingHorizontal: 20,
+                  ),
+                  10.toHeight,
+
+                  CommonHelper().labelCommon("Email"),
+                  CustomInput(
+                    controller: emailController,
+                    hintText: ln.getString("Email"),
+                    paddingHorizontal: 20,
+                  ),
+                  10.toHeight,
+
+                  CommonHelper().labelCommon("Phone"),
+                  CustomInput(
+                    controller: phoneController,
+                    hintText: ln.getString("Phone"),
+                    paddingHorizontal: 20,
+                    marginBottom: 10,
+                  ),
+
+                  const DonationDetails(),
+
+                  if (manualPayment != null) ...[
+                    CommonHelper().labelCommon("Choose payment method"),
+                    16.toHeight,
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedMethod = pgProvider.paymentList.indexOf(manualPayment);
+                        });
+                        pgProvider.setKey('manual_payment', selectedMethod);
+                      },
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 60,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: selectedMethod == pgProvider.paymentList.indexOf(manualPayment)
+                                    ? cc.primaryColor
+                                    : cc.borderColor,
+                              ),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl: manualPayment['logo_link'],
+                              errorWidget: (context, url, error) => Image.asset(
+                                'assets/images/bank_transfer.png',
+                                height: 40,
+                              ),
+                            ),
+                          ),
+                          if (selectedMethod == pgProvider.paymentList.indexOf(manualPayment))
+                            Positioned(
+                              right: -7,
+                              top: -9,
+                              child: CommonHelper().checkCircle(),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+
+                  Consumer<BankTransferService>(
+                    builder: (context, btProvider, child) => Column(
+                      children: [
+                        if (manualPayment != null && manualPayment['description'] != null) ...[
+                          12.toHeight,
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: cc.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: cc.borderColor),
+                            ),
+                            child: HtmlWidget(manualPayment['description']),
+                          ),
+                        ],
+                        30.toHeight,
+                        CommonHelper().buttonPrimary('Choose images', () {
+                          btProvider.pickImage(context);
+                        }),
+                        if (btProvider.pickedImage != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: Image.file(
+                              File(btProvider.pickedImage.path),
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+
+                  20.toHeight,
+
+                  TacPp(
+                    valueListenable: termsAgree,
+                    tTitle: "Terms & Condition".tr(),
+                    tData: dProvider.dTC,
+                    pTitle: "Privacy policy",
+                    pData: dProvider.dPP,
+                  ),
+
+                  14.toHeight,
+
+                  CommonHelper().buttonPrimary('Pay & Confirm', () {
+                    if (nameController.text.trim().isEmpty ||
+                        !emailController.text.validateEmail ||
+                        phoneController.text.trim().length < 3 ||
+                        limitedUnits <= 0 ||
+                        !termsAgree.value) {
+                      'Please fill all required fields properly'.tr().showToast();
+                      return;
+                    }
+
+                    dProvider.setUserEnteredNameEmail(
+                      nameController.text,
+                      emailController.text,
+                    );
+
+                    final btProvider = Provider.of<BankTransferService>(context, listen: false);
+
+                    payAction(
+                      'manual_payment',
+                      context,
+                      btProvider.pickedImage,
+                      campaignId: widget.campaignId,
+                      name: nameController.text.trim(),
+                      email: emailController.text.trim(),
+                      phone: phoneController.text.trim(),
+                      anonymousDonate: annonymusDonate,
+                    );
+                  }, isloading: dProvider.isloading),
+
+                  40.toHeight
+                ],
+              );
+            },
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

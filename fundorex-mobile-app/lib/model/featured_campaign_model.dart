@@ -137,7 +137,7 @@ class Datum {
     required this.image,
     required this.deadline,
     required this.reamainingTime,
-    this.titleAr,
+    this.title_ar,
     this.price,
   });
 
@@ -150,7 +150,7 @@ class Datum {
   DateTime? reamainingTime;
 
   // ✅ NEW FIELDS
-  String? titleAr;
+  String? title_ar;
   dynamic price;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -161,7 +161,7 @@ class Datum {
     image: json["image"] ?? '',
     deadline: DateTime.tryParse(json["deadline"] ?? ''),
     reamainingTime: DateTime.tryParse(json["reamaining_time"]?.toString() ?? ''),
-    titleAr: json["title_ar"],
+    title_ar: json["title_ar"],
     price: json["price"],
   );
 
@@ -173,7 +173,7 @@ class Datum {
     "image": image,
     "deadline": deadline?.toIso8601String(),
     "reamaining_time": reamainingTime?.toIso8601String(),
-    "title_ar": titleAr,
+    "title_ar": title_ar,
     "price": price,
   };
 }

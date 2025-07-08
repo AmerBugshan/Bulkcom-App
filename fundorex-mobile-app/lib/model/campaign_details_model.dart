@@ -13,7 +13,10 @@ String campaignDetailsModelToJson(CampaignDetailsModel data) =>
 class CampaignDetailsModel {
   CampaignDetailsModel(
       {this.title,
+        this.titleAr,
       this.description,
+        this.unitPrice,
+        this.availableQuantity,
       this.image,
       this.userImage,
       this.userName,
@@ -31,7 +34,10 @@ class CampaignDetailsModel {
       required this.campaignOwnerId});
 
   String? title;
+  String? titleAr;
   String? description;
+  num? unitPrice;
+  num? availableQuantity;
   String? image;
   dynamic userImage;
   String? isEmergencyWithText;
@@ -51,7 +57,14 @@ class CampaignDetailsModel {
   factory CampaignDetailsModel.fromJson(Map<String, dynamic> json) =>
       CampaignDetailsModel(
         title: json["title"],
+        titleAr: json["title_ar"],
         description: json["description"],
+        unitPrice: json["unit_price"] is String
+            ? num.tryParse(json["unit_price"])
+            : json["unit_price"],
+        availableQuantity: json["available_quantity"] is String
+            ? num.tryParse(json["available_quantity"])
+            : json["available_quantity"],
         image: json["image"],
         isEmergencyWithText: json["isEmergencyWithText"] ?? "",
         rewardInfo: json["rewardInfo"] == null
@@ -74,7 +87,10 @@ class CampaignDetailsModel {
 
   Map<String, dynamic> toJson() => {
         "title": title,
+        "title_ar": titleAr,
         "description": description,
+        "unit_price" : unitPrice,
+        "available_quantity" : availableQuantity,
         "image": image,
         "user_image": userImage,
         "user_name": userName,
