@@ -1,18 +1,15 @@
 // ignore_for_file: avoid_print, non_constant_identifier_names
 
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fundorex/helper/extension/string_extension.dart';
 import 'package:fundorex/service/profile_service.dart';
 import 'package:fundorex/view/utils/config.dart';
-import 'package:fundorex/view/utils/responsive.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common_service.dart';
-import 'signup_service.dart';
 
 class LoginService with ChangeNotifier {
   bool isloading = false;
@@ -27,94 +24,95 @@ class LoginService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(email, pass, BuildContext context, bool keepLoggedIn,
-      {isFromLoginPage = true}) async {
-    var connection = await checkConnection();
-    if (connection) {
-      setLoadingTrue();
-      var data = jsonEncode({
-        'login': email,
-        'password': pass,
-      });
-      var header = {
-        //if header type is application/json then the data should be in jsonEncode method
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      };
+  Future<bool> sendOtp(String phone, BuildContext context) async {
+    setLoadingTrue();
+    try {
+      final response = await http.post(
+        Uri.parse('$baseApi/send-login-otp'),
+        headers: {
+          'Accept': 'application/json', // مهم جدا
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {'phone': phone},
+      );
 
-      var response = await http.post(Uri.parse('$baseApi/login'),
-          body: data, headers: header);
+      setLoadingFalse();
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        //start stripe
-        //============>
-
-        String token = jsonDecode(response.body)['token'];
-        int userId = jsonDecode(response.body)['users']['id'];
-        setToken(token);
-        // String state = jsonDecode(response.body)['users']['state'].toString();
-        String country_id =
-            jsonDecode(response.body)['users']['country_id'].toString();
-        await Provider.of<ProfileService>(context, listen: false).fetchData();
-
-        setLoadingFalse();
-        // Navigator.pushReplacement<void, void>(
-        //   context,
-        //   MaterialPageRoute<void>(
-        //     builder: (BuildContext context) => const LandingPage(),
-        //   ),
-        // );
-
-        if (keepLoggedIn) {
-          saveDetails(email, pass, token, userId, country_id);
-        } else {
-          setKeepLoggedInFalseSaveToken(token);
-        }
-
-        print(response.body);
-
+      if (response.statusCode == 200) {
         return true;
       } else {
-        print(response.body);
-        //Login unsuccessful ==========>
-        if (isFromLoginPage) {
-          try {
-            final js = jsonDecode(response.body);
-            if (js["message"] != null) {
-              js["message"]?.toString().showToast();
-            } else if (js["validation_errors"] != null) {
-              showError(js["validation_errors"])?.toString().showToast();
-            } else {
-              throw "";
-            }
-          } catch (e) {
-            response.reasonPhrase.toString().showToast();
-          }
+        try {
+          final js = jsonDecode(response.body);
+          (js["message"] ?? "حدث خطأ أثناء إرسال الرمز").toString().showToast();
+        } catch (e) {
+          // فشل قراءة الرسالة من الرد
+          print('رد غير متوقع: ${response.body}');
+          "حدث خطأ غير متوقع من الخادم".showToast();
         }
-        setLoadingFalse();
         return false;
       }
-    } else {
-      //internet off
+    } catch (e) {
+      setLoadingFalse();
+      print("Exception during sendOtp: $e");
+      "فشل الاتصال بالخادم".showToast();
       return false;
     }
   }
 
-  saveDetails(String email, pass, String token, int userId, country_id) async {
+
+  Future<bool> verifyOtp(String phone, String otp, BuildContext context) async {
+    setLoadingTrue();
+    try {
+      final response = await http.post(
+        Uri.parse('$baseApi/verify-login-otp'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'phone': phone,
+          'otp_code': otp,
+        },
+      );
+
+      setLoadingFalse();
+
+      if (response.statusCode == 200 || response.statusCode == 302) {
+        final prefs = await SharedPreferences.getInstance();
+        final js = jsonDecode(response.body);
+
+        // حفظ التوكن إن وُجد
+        if (js.containsKey("token")) {
+          prefs.setString("token", js["token"]);
+          prefs.setBool('keepLoggedIn', true);
+        }
+
+        // تحميل البيانات الشخصية
+        await Provider.of<ProfileService>(context, listen: false).fetchData();
+
+        return true;
+      } else {
+        final js = jsonDecode(response.body);
+        (js["message"] ?? "رمز التحقق غير صحيح").toString().showToast();
+        return false;
+      }
+    } catch (e) {
+      setLoadingFalse();
+      "حدث خطأ أثناء التحقق".showToast();
+      return false;
+    }
+
+  }
+  Future<void> saveDetails(
+      String phone, password, String token, int userId, String countryId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("email", email);
+    prefs.setString("phone", phone);
     prefs.setBool('keepLoggedIn', true);
-    // prefs.setString("pass", pass);
     prefs.setString("token", token);
     prefs.setInt('userId', userId);
-    prefs.setString("countryId", country_id.toString());
+    prefs.setString("countryId", countryId.toString());
     print('token is $token');
     print('user id is $userId');
   }
 
-  setKeepLoggedInFalseSaveToken(token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('keepLoggedIn', false);
-    prefs.setString("token", token);
-  }
 }

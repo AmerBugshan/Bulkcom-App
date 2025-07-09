@@ -16,7 +16,6 @@ import 'package:fundorex/view/utils/custom_input.dart';
 import 'package:provider/provider.dart';
 
 import '../../../service/auth_services/apple_sign_in_sevice.dart';
-import '../reset_password/reset_pass_email_page.dart';
 import '../signup/signup.dart';
 
 class LoginPage extends StatefulWidget {
@@ -28,30 +27,20 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late bool _passwordVisible;
-
-  @override
-  void initState() {
-    super.initState();
-    _passwordVisible = false;
-    // emailController.text = "ahsan@gmial.com";
-    // passwordController.text = "12345678";
-  }
-
   final _formKey = GlobalKey<FormState>();
-
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
-  bool keepLoggedIn = true;
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController otpController = TextEditingController();
+  bool otpSent = false;
 
   @override
   Widget build(BuildContext context) {
     ConstantColors cc = ConstantColors();
+    final loginService = Provider.of<LoginService>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CommonHelper().appbarCommon("", context, () {
-        context.popFalse;
+        Navigator.pop(context);
       }),
       body: Listener(
         onPointerDown: (_) {
@@ -75,349 +64,160 @@ class _LoginPageState extends State<LoginPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(
-                          height: 60,
-                        ),
-                        CommonHelper()
-                            .titleCommon(ln.getString("مرحبًا بعودتك! الرجاء تسجيل الدخول")),
-
-                        const SizedBox(
-                          height: 33,
-                        ),
-
-                        //Name ============>
-                        CommonHelper().labelCommon(ln.getString("البريد الالكتروني")),
-
+                        const SizedBox(height: 60),
+                        CommonHelper().titleCommon(ln.getString("مرحبًا بعودتك! الرجاء تسجيل الدخول")),
+                        const SizedBox(height: 33),
+                        CommonHelper().labelCommon(ln.getString("رقم الجوال (5xxxxxxxx)")),
                         CustomInput(
-                          controller: emailController,
+                          controller: phoneController,
                           validation: (value) {
                             if (value == null || value.isEmpty) {
-                              return ln.getString('ادخل البريد الالكتروني');
+                              return ln.getString('ادخل رقم الجوال');
                             }
                             return null;
                           },
-                          hintText: ln.getString("البريد الالكتروني"),
-                          icon: 'assets/icons/user.png',
+                          hintText: ln.getString("5xxxxxxxx"),
+                          icon: 'assets/icons/phone.png',
                           textInputAction: TextInputAction.next,
+                          keyboardType: TextInputType.phone,
                         ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-
-                        //password ===========>
-                        CommonHelper().labelCommon(ln.getString("كلمة المرور")),
-
-                        Container(
-                            margin: const EdgeInsets.only(bottom: 19),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: TextFormField(
-                              controller: passwordController,
-                              textInputAction: TextInputAction.next,
-                              obscureText: !_passwordVisible,
-                              style: const TextStyle(fontSize: 14),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return ln
-                                      .getString('ادخل كلمة المرور');
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                  fillColor: ConstantColors().greySecondary,
-                                  filled: true,
-                                  prefixIcon: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        height: 22.0,
-                                        width: 40.0,
-                                        decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/icons/lock.png'),
-                                              fit: BoxFit.fitHeight),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  suffixIcon: IconButton(
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    icon: Icon(
-                                      // Based on passwordVisible state choose the icon
-                                      _passwordVisible
-                                          ? Icons.visibility_off_outlined
-                                          : Icons.visibility_outlined,
-                                      color: Colors.grey,
-                                      size: 22,
-                                    ),
-                                    onPressed: () {
-                                      // Update the state i.e. toogle the state of passwordVisible variable
-                                      setState(() {
-                                        _passwordVisible = !_passwordVisible;
-                                      });
-                                    },
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color:
-                                              ConstantColors().primaryColor)),
-                                  errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color:
-                                              ConstantColors().warningColor)),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color:
-                                              ConstantColors().primaryColor)),
-                                  hintText: ln.getString('ادخل كلمة المرور'),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 18)),
-                            )),
-
-                        // =================>
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            //keep logged in checkbox
-                            Expanded(
-                              child: CheckboxListTile(
-                                checkColor: Colors.white,
-                                activeColor: ConstantColors().primaryColor,
-                                contentPadding: const EdgeInsets.all(0),
-                                title: Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5),
-                                  child: Text(
-                                    ln.getString("تذكرني"),
-                                    style: TextStyle(
-                                        color: ConstantColors().greyFour,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 14),
-                                  ),
-                                ),
-                                value: keepLoggedIn,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    keepLoggedIn = !keepLoggedIn;
-                                  });
-                                },
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (BuildContext context) =>
-                                        const ResetPassEmailPage(),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                width: 122,
-                                height: 40,
-                                child: Text(
-                                  ln.getString("نسيت كلمة المرور؟"),
-                                  style: TextStyle(
-                                      color: cc.primaryColor,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-
-                        //Login button ==================>
-                        const SizedBox(
-                          height: 13,
-                        ),
-
+                        if (otpSent) ...[
+                          const SizedBox(height: 20),
+                          CommonHelper().labelCommon(ln.getString("رمز التحقق")),
+                          CustomInput(
+                            controller: otpController,
+                            hintText: ln.getString("ادخل رمز التحقق"),
+                            icon: 'assets/icons/lock.png',
+                            keyboardType: TextInputType.number,
+                          ),
+                        ],
+                        const SizedBox(height: 20),
                         Consumer<LoginService>(
-                          builder: (context, provider, child) => CommonHelper()
-                              .buttonPrimary(ln.getString("تسجيل دخول"), () {
-                            if (provider.isloading == false) {
+                          builder: (context, provider, child) => CommonHelper().buttonPrimary(
+                            ln.getString(otpSent ? "تحقق من الرمز" : "إرسال رمز التحقق"),
+                                () async {
                               if (_formKey.currentState!.validate()) {
-                                provider
-                                    .login(
-                                        emailController.text.trim(),
-                                        passwordController.text,
-                                        context,
-                                        keepLoggedIn)
-                                    .then((value) {
-                                  if (value == true) {
+                                final fullPhone = "+966${phoneController.text}";
+                                if (!otpSent) {
+                                  final sent = await provider.sendOtp(phoneController.text, context);
+                                  if (sent) setState(() => otpSent = true);
+                                } else {
+                                  final success = await provider.verifyOtp(fullPhone, otpController.text, context);
+                                  if (success) {
                                     context.popTrue;
                                   }
-                                });
+                                }
                               }
-                              // Navigator.pushReplacement<void, void>(
-                              //   context,
-                              //   MaterialPageRoute<void>(
-                              //     builder: (BuildContext context) =>
-                              //         const LandingPage(),
-                              //   ),
-                              // );
-                            }
-                          },
-                                  isloading: provider.isloading == false
-                                      ? false
-                                      : true),
+                            },
+                            isloading: provider.isloading,
+                          ),
                         ),
-
-                        const SizedBox(
-                          height: 25,
-                        ),
+                        const SizedBox(height: 25),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             RichText(
                               text: TextSpan(
-                                text:
-                                    ln.getString("ليس لديك حساب؟") + ' ',
-                                style: const TextStyle(
-                                    color: Color(0xff646464), fontSize: 14),
+                                text: ln.getString("ليس لديك حساب؟") + ' ',
+                                style: const TextStyle(color: Color(0xff646464), fontSize: 14),
                                 children: <TextSpan>[
                                   TextSpan(
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const SignupPage()));
-                                        },
-                                      text: ln.getString('سجل الان!'),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                        color: cc.primaryColor,
-                                      )),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => const SignupPage()),
+                                        );
+                                      },
+                                    text: ln.getString('سجل الان!'),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      color: cc.primaryColor,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                           ],
                         ),
-
-                        // Divider (or)
-                        const SizedBox(
-                          height: 30,
-                        ),
+                        const SizedBox(height: 30),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Expanded(
-                                child: Container(
-                              height: 1,
-                              color: cc.greyFive,
-                            )),
+                            Expanded(child: Container(height: 1, color: cc.greyFive)),
                             Container(
                               width: 40,
                               alignment: Alignment.center,
                               margin: const EdgeInsets.only(bottom: 25),
                               child: Text(
                                 ln.getString("أو"),
-                                style: TextStyle(
-                                    color: cc.greyPrimary,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600),
+                                style: TextStyle(color: cc.greyPrimary, fontSize: 17, fontWeight: FontWeight.w600),
                               ),
                             ),
-                            Expanded(
-                                child: Container(
-                              height: 1,
-                              color: cc.greyFive,
-                            )),
+                            Expanded(child: Container(height: 1, color: cc.greyFive)),
                           ],
                         ),
-
-                        // login with google, facebook button ===========>
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
                         Consumer<GoogleSignInService>(
                           builder: (context, gProvider, child) => InkWell(
-                              onTap: () {
-                                if (gProvider.isloading == false) {
-                                  gProvider.googleLogin(context);
-                                }
-                              },
-                              child: LoginHelper().commonButton(
-                                  'assets/icons/google.png',
-                                  ln.getString("Sign in with Google"),
-                                  isloading: gProvider.isloading == false
-                                      ? false
-                                      : true)),
+                            onTap: () {
+                              if (!gProvider.isloading) {
+                                gProvider.googleLogin(context);
+                              }
+                            },
+                            child: LoginHelper().commonButton(
+                              'assets/icons/google.png',
+                              ln.getString("Sign in with Google"),
+                              isloading: gProvider.isloading,
+                            ),
+                          ),
                         ),
                         if (Platform.isIOS) ...[
                           const SizedBox(height: 20),
                           Consumer<AppleSignInService>(
                             builder: (context, gProvider, child) => InkWell(
-                                onTap: () async {
-                                  if (gProvider.isloading == false) {
-                                    gProvider.setLoadingTrue();
-                                    await gProvider
-                                        .appleLogin(context, autoLogin: true)
-                                        .then((value) async {
-                                      if (value == true) {
-                                        // Navigator.of(context).pop();
-                                        await Provider.of<ProfileService>(
-                                                context,
-                                                listen: false)
-                                            .fetchData();
-                                        context.popTrue;
-                                      }
-                                    }).onError((error, stackTrace) =>
-                                            gProvider.setLoadingFalse());
-                                    gProvider.setLoadingFalse();
-                                  }
-                                },
-                                child: LoginHelper().commonButton(
-                                    'assets/icons/apple.png',
-                                    ln.getString("Sign in with Apple"),
-                                    isloading: gProvider.isloading == false
-                                        ? false
-                                        : true)),
-                          )
+                              onTap: () async {
+                                if (!gProvider.isloading) {
+                                  gProvider.setLoadingTrue();
+                                  await gProvider.appleLogin(context, autoLogin: true).then((value) async {
+                                    if (value == true) {
+                                      await Provider.of<ProfileService>(context, listen: false).fetchData();
+                                      context.popTrue;
+                                    }
+                                  }).onError((error, stackTrace) => gProvider.setLoadingFalse());
+                                  gProvider.setLoadingFalse();
+                                }
+                              },
+                              child: LoginHelper().commonButton(
+                                'assets/icons/apple.png',
+                                ln.getString("Sign in with Apple"),
+                                isloading: gProvider.isloading,
+                              ),
+                            ),
+                          ),
                         ],
                         const SizedBox(height: 20),
                         Consumer<FacebookLoginService>(
                           builder: (context, fProvider, child) => InkWell(
                             onTap: () {
-                              if (fProvider.isloading == false) {
+                              if (!fProvider.isloading) {
                                 fProvider.checkIfLoggedIn(context);
                               }
                             },
                             child: LoginHelper().commonButton(
-                                'assets/icons/facebook.png',
-                                ln.getString("Sign in with Facebook"),
-                                isloading: fProvider.isloading == false
-                                    ? false
-                                    : true),
+                              'assets/icons/facebook.png',
+                              ln.getString("Sign in with Facebook"),
+                              isloading: fProvider.isloading,
+                            ),
                           ),
                         ),
-
-                        const SizedBox(
-                          height: 60,
-                        ),
+                        const SizedBox(height: 60),
                       ],
                     ),
                   ),
-                )
-                // }
-                // }),
+                ),
               ],
             ),
           ),

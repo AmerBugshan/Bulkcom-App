@@ -11,6 +11,14 @@ import 'package:provider/provider.dart';
 
 import '../../../service/campaign_details_service.dart';
 
+import 'package:flutter/material.dart';
+import 'package:fundorex/service/profile_service.dart';
+import 'package:fundorex/view/utils/common_helper.dart';
+import 'package:fundorex/view/utils/constant_colors.dart';
+import 'package:provider/provider.dart';
+import 'package:fundorex/view/supports/my_tickets_page.dart';
+
+
 class QuickDonations extends StatelessWidget {
   const QuickDonations({super.key, required this.amountController});
 
@@ -20,104 +28,42 @@ class QuickDonations extends StatelessWidget {
   Widget build(BuildContext context) {
     ConstantColors cc = ConstantColors();
 
-    return Consumer<QuickDonationDropdownService>(
-      builder: (context, provider, child) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CommonHelper().titleCommon('شارك بشكل اسرع'),
-          sizedBoxCustom(18),
-          provider.campaignDropdownList.isNotEmpty
-              ? Consumer<RtlService>(
-                  builder: (context, rtlP, child) => Row(
-                    children: [
-                      //dropdown
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          decoration: BoxDecoration(
-                            color: cc.greySecondary,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              // menuMaxHeight: 200,
-                              isExpanded: true,
-                              value: provider.selectedCampaign,
-                              icon: Icon(Icons.keyboard_arrow_down_rounded,
-                                  color: cc.greyFour),
-                              iconSize: 26,
-                              elevation: 17,
-                              style: TextStyle(color: cc.greyFour),
-                              onChanged: (newValue) {
-                                provider.setCampaignValue(newValue);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CommonHelper().titleCommon('لديك منتج لكن غير موجود؟'),
+        sizedBoxCustom(18),
 
-                                //setting the id of selected value
-                                provider.setCampaignId(
-                                    provider.campaignDropdownIndexList[provider
-                                        .campaignDropdownList
-                                        .indexOf(newValue!)]);
-                              },
-                              items: provider.campaignDropdownList
-                                  .map<DropdownMenuItem<String>>((value) {
-                                return DropdownMenuItem(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        color: cc.greyPrimary.withOpacity(.8)),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-                      ),
+        // الزر فقط بدون دروب داون
+        Align(
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            width: 310,
+            child: CommonHelper().buttonPrimary(
+              'اقترح منتجك الان!',
+                  () {
+                final isLoggedIn = Provider.of<ProfileService>(context, listen: false)
+                    .profileDetails !=
+                    null;
 
-                      const SizedBox(
-                        width: 12,
-                      ),
+                if (isLoggedIn) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MyTicketsPage()),
+                  );
 
-                      //enter amount input field
-                      // SizedBox(
-                      //   width: 90,
-                      //   child: CustomInput(
-                      //     controller: amountController,
-                      //     hintText: "Amount",
-                      //     textInputAction: TextInputAction.next,
-                      //     marginBottom: 0,
-                      //     paddingHorizontal: 15,
-                      //     borderRadius: 5,
-                      //     paddingVertical: 16,
-                      //   ),
-                      // ),
+                } else {
 
-                      //Button
-                      SizedBox(
-                        width: 90,
-                        child: CommonHelper().buttonPrimary('شارك', () {
-                          Provider.of<CampaignDetailsService>(context,
-                                  listen: false)
-                              .fetchCampaignDetails(
-                                  context: context,
-                                  campaignId: provider.selectedCampaignId);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  DonationPaymentChoosePage(
-                                      campaignId: provider.selectedCampaignId),
-                            ),
-                          );
-                        }, paddingVertical: 16, borderRadius: 5),
-                      )
-                    ],
-                  ),
-                )
-              : Container()
-        ],
-      ),
+                  OthersHelper().showToast('يجب تسجيل الدخول أولاً', Colors.black);
+                  Navigator.pushNamed(context, '/login');
+                }
+              },
+              paddingVertical: 16,
+              borderRadius: 5,
+            ),
+          ),
+        )
+      ],
     );
   }
 }

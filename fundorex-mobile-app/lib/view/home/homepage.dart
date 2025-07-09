@@ -133,20 +133,24 @@ class _HomepageState extends State<Homepage> {
                       padding: EdgeInsets.symmetric(horizontal: screenPadding),
                       margin: const EdgeInsets.only(top: 25),
                       child: Column(children: [
+
+                        Categories(cc: cc, width: 160, marginRight: 20),
+
+                        sizedBoxCustom(24),
+
+                        //featured campaign ======>
+                        FeaturedCampaign(cc: cc),
+
+                        sizedBoxCustom(24),
+
+
+
                         //Quick donations dropdown =========>
                         QuickDonations(
                           amountController: amountController,
                         ),
 
                         sizedBoxCustom(25),
-                        //featured campaign ======>
-                        FeaturedCampaign(cc: cc),
-
-                        sizedBoxCustom(24),
-
-                        Categories(cc: cc, width: 160, marginRight: 20),
-
-                        sizedBoxCustom(24),
 
                         RecentlyAdded(cc: cc),
                         sizedBoxCustom(28),

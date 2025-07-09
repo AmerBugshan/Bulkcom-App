@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'constant_colors.dart';
 
 class CustomInput extends StatelessWidget {
@@ -10,6 +9,7 @@ class CustomInput extends StatelessWidget {
   final bool isPasswordField;
   final FocusNode? focusNode;
   final bool isNumberField;
+  final TextInputType? keyboardType; // ✅ جديد
   final String? icon;
   final double paddingHorizontal;
   final double paddingVertical;
@@ -30,6 +30,7 @@ class CustomInput extends StatelessWidget {
     this.controller,
     this.validation,
     this.icon,
+    this.keyboardType, // ✅ جديد
     this.paddingHorizontal = 8.0,
     this.marginBottom = 19,
     this.borderRadius = 8,
@@ -41,53 +42,62 @@ class CustomInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(bottom: marginBottom),
-        decoration: BoxDecoration(
-            // color: ConstantColors().greySecondary,
-            borderRadius: BorderRadius.circular(borderRadius)),
-        child: TextFormField(
-          controller: controller,
-          keyboardType:
-              isNumberField ? TextInputType.number : TextInputType.text,
-          focusNode: focusNode,
-          onChanged: onChanged,
-          maxLines: maxLines,
-          minLines: minLines,
-          validator: validation,
-          textInputAction: textInputAction,
-          obscureText: isPasswordField,
-          style: const TextStyle(fontSize: 14),
-          decoration: InputDecoration(
-              fillColor: ConstantColors().greySecondary,
-              filled: true,
-              prefixIcon: icon != null
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 22.0,
-                          width: 40.0,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage(icon!),
-                                fit: BoxFit.fitHeight),
-                          ),
-                        ),
-                      ],
-                    )
-                  : null,
-              enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.transparent),
-                  borderRadius: BorderRadius.circular(borderRadius)),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: ConstantColors().primaryColor)),
-              errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: ConstantColors().warningColor)),
-              focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: ConstantColors().primaryColor)),
-              hintText: hintText,
-              contentPadding: EdgeInsets.symmetric(
-                  horizontal: paddingHorizontal, vertical: paddingVertical)),
-        ));
+      margin: EdgeInsets.only(bottom: marginBottom),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType ??
+            (isNumberField ? TextInputType.number : TextInputType.text), // ✅ يدعم كلا الحالتين
+        focusNode: focusNode,
+        onChanged: onChanged,
+        maxLines: maxLines,
+        minLines: minLines,
+        validator: validation,
+        textInputAction: textInputAction,
+        obscureText: isPasswordField,
+        style: const TextStyle(fontSize: 14),
+        decoration: InputDecoration(
+          fillColor: ConstantColors().greySecondary,
+          filled: true,
+          prefixIcon: icon != null
+              ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 22.0,
+                width: 40.0,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(icon!),
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+              ),
+            ],
+          )
+              : null,
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.transparent),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: ConstantColors().primaryColor),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: ConstantColors().warningColor),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: ConstantColors().primaryColor),
+          ),
+          hintText: hintText,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: paddingHorizontal,
+            vertical: paddingVertical,
+          ),
+        ),
+      ),
+    );
   }
 }

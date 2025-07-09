@@ -43,7 +43,7 @@ class EmailVerifyService with ChangeNotifier {
         'email': email,
       });
 
-      var response = await http.post(Uri.parse('$baseApi/send-otp-in-mail'),
+      var response = await http.post(Uri.parse('$baseApi/send-login-otp'),
           headers: header, body: data);
       if (response.statusCode >= 200 && response.statusCode < 300) {
         var otpNumber = jsonDecode(response.body)['otp'];
