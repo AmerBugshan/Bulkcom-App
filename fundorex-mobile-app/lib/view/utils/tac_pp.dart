@@ -51,7 +51,7 @@ class TacPp extends StatelessWidget {
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
             text: TextSpan(
-                text: "${'I agree to'.tr()} ",
+                text: "${'أنا أوافق على'.tr()} ",
                 style: context.titleMedium?.copyWith(
                   color: cc.black5,
                   fontWeight: FontWeight.w400,
@@ -74,7 +74,7 @@ class TacPp extends StatelessWidget {
                               fontWeight: FontWeight.w600)
                           : null),
                   TextSpan(
-                    text: " ${'and'.tr()} ",
+                    text: " ${'و'.tr()} ",
                   ),
                   TextSpan(
                       recognizer: TapGestureRecognizer()

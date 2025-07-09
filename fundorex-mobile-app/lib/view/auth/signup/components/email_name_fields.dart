@@ -11,11 +11,13 @@ class EmailNameFields extends StatelessWidget {
     required this.fullNameController,
     required this.userNameController,
     required this.emailController,
+    this.showEmailField = true,  // New parameter with default value true
   });
 
   final fullNameController;
   final userNameController;
   final emailController;
+  final bool showEmailField;  // Added parameter
 
   @override
   Widget build(BuildContext context) {
@@ -23,59 +25,56 @@ class EmailNameFields extends StatelessWidget {
       builder: (context, ln, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //Name ============>
-          CommonHelper().labelCommon("Full name"),
-
+          // Full Name
+          CommonHelper().labelCommon("اللإسم الكامل"),
           CustomInput(
             controller: fullNameController,
             validation: (value) {
               if (value == null || value.isEmpty) {
-                return ln.getString('Please enter your full name');
+                return ln.getString('ادخل إسمك كاملا');
               }
               return null;
             },
-            hintText: ln.getString("Enter your full name"),
+            hintText: ln.getString("ادخل إسمك كاملا"),
             icon: 'assets/icons/user.png',
             textInputAction: TextInputAction.next,
           ),
-          const SizedBox(
-            height: 8,
-          ),
+          const SizedBox(height: 8),
 
-          //User name ============>
-          CommonHelper().labelCommon("Username"),
+          // Username (Hidden via if(false))
+          if (false) ...[
+            CommonHelper().labelCommon("Username"),
+            CustomInput(
+              controller: userNameController,
+              validation: (value) {
+                if (value == null || value.isEmpty) {
+                  return ln.getString('Please enter your username');
+                }
+                return null;
+              },
+              hintText: ln.getString("Enter your username"),
+              icon: 'assets/icons/user.png',
+              textInputAction: TextInputAction.next,
+            ),
+            const SizedBox(height: 8),
+          ],
 
-          CustomInput(
-            controller: userNameController,
-            validation: (value) {
-              if (value == null || value.isEmpty) {
-                return ln.getString('Please enter your username');
-              }
-              return null;
-            },
-            hintText: ln.getString("Enter your username"),
-            icon: 'assets/icons/user.png',
-            textInputAction: TextInputAction.next,
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-
-          //Email ============>
-          CommonHelper().labelCommon("Email"),
-
-          CustomInput(
-            controller: emailController,
-            validation: (value) {
-              if (!value!.validateEmail) {
-                return ln.getString('Please enter your email');
-              }
-              return null;
-            },
-            hintText: ln.getString("Enter your email"),
-            icon: 'assets/icons/email-grey.png',
-            textInputAction: TextInputAction.next,
-          ),
+          // Email (Hidden or shown based on param)
+          if (showEmailField) ...[
+            CommonHelper().labelCommon("البريد الإلكتروني"),
+            CustomInput(
+              controller: emailController,
+              validation: (value) {
+                if (!value!.validateEmail) {
+                  return ln.getString('ادخل بريدك الإلكتروني');
+                }
+                return null;
+              },
+              hintText: ln.getString("ادخل بريدك الإلكتروني"),
+              icon: 'assets/icons/email-grey.png',
+              textInputAction: TextInputAction.next,
+            ),
+          ],
         ],
       ),
     );

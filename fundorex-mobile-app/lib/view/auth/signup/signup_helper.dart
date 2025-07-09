@@ -42,7 +42,7 @@ class SignupHelper {
   //
   phoneFieldDecoration() {
     return InputDecoration(
-        labelText: 'Phone Number',
+        labelText: 'رقم الجوال',
         filled: true,
         fillColor: ConstantColors().greySecondary,
 
@@ -57,7 +57,7 @@ class SignupHelper {
             borderSide: BorderSide(color: ConstantColors().warningColor)),
         focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(color: ConstantColors().primaryColor)),
-        hintText: 'Enter phone number',
+        hintText: 'ادخل رقم الجوال',
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 8, vertical: 18));
   }

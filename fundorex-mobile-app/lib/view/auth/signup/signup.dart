@@ -27,11 +27,6 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   ValueNotifier<bool> termsAgree = ValueNotifier(false);
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController fullNameController = TextEditingController();
@@ -42,15 +37,12 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController cityController = TextEditingController();
 
-  bool keepLoggedIn = true;
-
   @override
   Widget build(BuildContext context) {
     ConstantColors cc = ConstantColors();
-    // Provider.of<SignupService>(context, listen: false).setLoadingFalse();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CommonHelper().appbarCommon('Register to join us', context, () {
+      appBar: CommonHelper().appbarCommon('سجل حسابك الأن', context, () {
         Navigator.pop(context);
       }),
       body: Listener(
@@ -61,176 +53,161 @@ class _SignupPageState extends State<SignupPage> {
           }
         },
         child: SingleChildScrollView(
-          child: Listener(
-            onPointerDown: (_) {
-              FocusScopeNode currentFocus = FocusScope.of(context);
-              if (!currentFocus.hasPrimaryFocus) {
-                currentFocus.focusedChild?.unfocus();
-              }
-            },
-            child: Consumer<SignupService>(
-              builder: (context, provider, child) => Consumer<AppStringService>(
-                builder: (context, ln, child) => Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // const SizedBox(
-                            //   height: 33,
-                            // ),
-                            // CommonHelper().titleCommon("Register to join us"),
-                            const SizedBox(
-                              height: 19,
-                            ),
-                            EmailNameFields(
-                              fullNameController: fullNameController,
-                              userNameController: userNameController,
-                              emailController: emailController,
-                            ),
+          child: Consumer<SignupService>(
+            builder: (context, provider, child) => Consumer<AppStringService>(
+              builder: (context, ln, child) => Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 19),
 
-                            const SizedBox(
-                              height: 8,
-                            ),
+                          // Full Name (Keep it first)
+                          EmailNameFields(
+                            fullNameController: fullNameController,
+                            userNameController: userNameController,
+                            emailController: emailController,
+                            showEmailField: false,  // We'll handle email below
+                          ),
 
-                            //Country dropdown =====>
-                            CountryStatesDropdowns(
-                              cityController: cityController,
-                            ),
+                          const SizedBox(height: 8),
 
-                            SignupPhonePass(
-                              passController: passwordController,
-                              confirmPassController: confirmPasswordController,
-                              phoneController: phoneController,
-                            ),
+                          // Phone Field (Now shown BEFORE Email)
+                          SignupPhonePass(
+                            passController: passwordController,
+                            confirmPassController: confirmPasswordController,
+                            phoneController: phoneController,
+                          ),
 
-                            //Agreement checkbox ===========>
+                          const SizedBox(height: 8),
 
-                            // CheckboxListTile(
-                            //   checkColor: Colors.white,
-                            //   activeColor: ConstantColors().primaryColor,
-                            //   contentPadding: const EdgeInsets.all(0),
-                            //   title: Container(
-                            //     padding:
-                            //         const EdgeInsets.symmetric(vertical: 5),
-                            //     child: Text(
-                            //       ln.getString(
-                            //           "I agree with the terms and conditons"),
-                            //       style: TextStyle(
-                            //           color: ConstantColors().greyFour,
-                            //           fontWeight: FontWeight.w400,
-                            //           fontSize: 14),
-                            //     ),
-                            //   ),
-                            //   value: termsAgree,
-                            //   onChanged: (newValue) {
-                            //     setState(() {
-                            //       termsAgree = !termsAgree;
-                            //     });
-                            //   },
-                            //   controlAffinity: ListTileControlAffinity.leading,
-                            // ),
-                            Consumer<DonateService>(
-                                builder: (context, ds, child) {
-                              return TacPp(
-                                valueListenable: termsAgree,
-                                tTitle: "Terms & Condition".tr(),
-                                tData: ds.sTC,
-                                pTitle: "Privacy policy",
-                                pData: ds.sPP,
-                              );
-                            }),
-                            // sign up button
-                            const SizedBox(
-                              height: 10,
+                          // Email Field (Now shown AFTER Phone)
+                          CommonHelper().labelCommon("Email"),
+                          TextFormField(
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              hintText: ln.getString('Enter your email'),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              prefixIcon: const Icon(Icons.email),
                             ),
-                            CommonHelper().buttonPrimary("Sign Up", () {
-                              debugPrint(passwordController.text.toString());
-                              if (_formKey.currentState!.validate()) {
-                                if (termsAgree.value == false) {
-                                  OthersHelper().showToast(
-                                      ln.getString(
-                                          'You must agree with the terms and conditions to register'),
-                                      Colors.black);
-                                } else if (passwordController.text.validPass !=
-                                    null) {
-                                  passwordController.text.validPass
-                                      ?.showToast();
-                                  return;
-                                } else if (passwordController.text !=
-                                    confirmPasswordController.text) {
-                                  OthersHelper().showToast(
-                                      ln.getString('Password did not match'),
-                                      Colors.black);
-                                } else if (passwordController.text.length < 6) {
-                                  OthersHelper().showToast(
-                                      ln.getString(
-                                          'Password must be at least 6 characters'),
-                                      Colors.black);
-                                } else {
-                                  if (provider.isloading == false) {
-                                    provider.signup(
-                                        fullNameController.text.trim(),
-                                        userNameController.text.trim(),
-                                        emailController.text.trim(),
-                                        passwordController.text,
-                                        cityController.text.trim(),
-                                        context);
-                                  }
-                                }
+                            validator: (value) {
+                              if (!value!.validateEmail) {
+                                return ln.getString('Please enter your email');
                               }
+                              return null;
                             },
-                                isloading:
-                                    provider.isloading == false ? false : true),
+                          ),
 
-                            const SizedBox(
-                              height: 25,
+                          const SizedBox(height: 8),
+
+                          // Country & City Dropdown
+                          CountryStatesDropdowns(
+                            cityController: cityController,
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          // Password Fields Hidden via if(false)
+                          if (false) ...[
+                            TextFormField(
+                              controller: passwordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                labelText: 'Password',
+                              ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                RichText(
-                                  text: TextSpan(
-                                    text: ln.getString(
-                                            'Already have an account?') +
-                                        '  ',
-                                    style: const TextStyle(
-                                        color: Color(0xff646464), fontSize: 14),
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          recognizer: TapGestureRecognizer()
-                                            ..onTap = () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const LoginPage()));
-                                            },
-                                          text: ln.getString('Sign In'),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: cc.primaryColor,
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 30,
+                            TextFormField(
+                              controller: confirmPasswordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                labelText: 'Confirm Password',
+                              ),
                             ),
                           ],
-                        ),
+
+                          // Terms & Conditions
+                          Consumer<DonateService>(
+                            builder: (context, ds, child) {
+                              return TacPp(
+                                valueListenable: termsAgree,
+                                tTitle: "الشروط و الأحكام".tr(),
+                                tData: ds.sTC,
+                                pTitle: "سياسة الخصوصية",
+                                pData: ds.sPP,
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          // Sign Up Button
+                          CommonHelper().buttonPrimary("Sign Up", () {
+                            if (_formKey.currentState!.validate()) {
+                              if (termsAgree.value == false) {
+                                OthersHelper().showToast(
+                                    ln.getString(
+                                        'You must agree with the terms and conditions to register'),
+                                    Colors.black);
+                              } else {
+                                if (provider.isloading == false) {
+                                  provider.signup(
+                                    fullNameController.text.trim(),
+                                    '', // username skipped
+                                    emailController.text.trim(),
+                                    '', // password skipped
+                                    cityController.text.trim(),
+                                    context,
+                                  );
+                                }
+                              }
+                            }
+                          }, isloading: provider.isloading == false ? false : true),
+
+                          const SizedBox(height: 25),
+
+                          // Already have account link
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              RichText(
+                                text: TextSpan(
+                                  text: ln.getString('لديك حساب بالفعل؟') + '  ',
+                                  style: const TextStyle(
+                                      color: Color(0xff646464), fontSize: 14),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                    const LoginPage()));
+                                          },
+                                        text: ln.getString('سجل دخولك الأن'),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          color: cc.primaryColor,
+                                        )),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 30),
+                        ],
                       ),
-                    )
-                    // }
-                    // }),
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
             ),
           ),

@@ -12,9 +12,9 @@ import 'package:provider/provider.dart';
 class SignupPhonePass extends StatefulWidget {
   const SignupPhonePass(
       {super.key,
-      required this.passController,
-      required this.phoneController,
-      required this.confirmPassController});
+        required this.passController,
+        required this.phoneController,
+        required this.confirmPassController});
 
   final passController;
   final confirmPassController;
@@ -46,166 +46,49 @@ class _SignupPhonePassState extends State<SignupPhonePass> {
         builder: (context, ln, child) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Phone number field
-            // CommonHelper().labelCommon("Phone"),
-            // Consumer<RtlService>(
-            //   builder: (context, rtlP, child) => IntlPhoneField(
-            //     controller: widget.phoneController,
-            //     decoration: SignupHelper().phoneFieldDecoration(),
-            //     initialCountryCode: provider.countryCode,
-            //     textAlign:
-            //         rtlP.direction == 'ltr' ? TextAlign.left : TextAlign.right,
-            //     onChanged: (phone) {
-            //       provider.setCountryCode(phone.countryISOCode);
-
-            //       provider.setPhone(phone.number);
-            //     },
-            //   ),
-            // ),
-
-            // const SizedBox(
-            //   height: 8,
-            // ),
-
-            //New password =========================>
-            CommonHelper().labelCommon("Password"),
-
+            // Phone Number Field
+            CommonHelper().labelCommon("رقم الجوال"),
             TextFormField(
-              controller: widget.passController,
-              textInputAction: TextInputAction.next,
-              obscureText: !_newpasswordVisible,
-              style: const TextStyle(fontSize: 14),
-              validator: (value) {
-                debugPrint(" valid ".toString());
-                debugPrint(value.toString());
-                return value.toString().validPass;
-              },
+              controller: widget.phoneController,
+              keyboardType: TextInputType.phone,
               decoration: InputDecoration(
-                  fillColor: ConstantColors().greySecondary,
-                  filled: true,
-                  prefixIcon: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 22.0,
-                        width: 40.0,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage('assets/icons/lock.png'),
-                              fit: BoxFit.fitHeight),
-                        ),
-                      ),
-                    ],
-                  ),
-                  suffixIcon: IconButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    icon: Icon(
-                      // Based on passwordVisible state choose the icon
-                      _newpasswordVisible
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                      color: Colors.grey,
-                      size: 22,
-                    ),
-                    onPressed: () {
-                      // Update the state i.e. toogle the state of passwordVisible variable
-                      setState(() {
-                        _newpasswordVisible = !_newpasswordVisible;
-                      });
-                    },
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.transparent),
-                      borderRadius: BorderRadius.circular(9)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: ConstantColors().primaryColor)),
-                  errorBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: ConstantColors().warningColor)),
-                  focusedErrorBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: ConstantColors().primaryColor)),
-                  hintText: ln.getString('Enter password'),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 18)),
+                hintText: ln.getString('ادخل رقم الجوال'),
+                prefixIcon: const Icon(Icons.phone),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(9),
+                    borderSide: BorderSide(color: ConstantColors().primaryColor)),
+                filled: true,
+                fillColor: ConstantColors().greySecondary,
+                contentPadding:
+                const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
+              ),
+              validator: (value) =>
+              value == null || value.isEmpty ? 'ادخل رقم الجوال' : null,
             ),
-            19.toHeight,
-            const SizedBox(
-              height: 10,
-            ),
-            //Confirm New password =========================>
-            CommonHelper().labelCommon("Confirm Password"),
 
-            Container(
-                margin: const EdgeInsets.only(bottom: 19),
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(8)),
-                child: TextFormField(
-                  controller: widget.confirmPassController,
-                  textInputAction: TextInputAction.next,
-                  obscureText: !_confirmNewPassswordVisible,
-                  style: const TextStyle(fontSize: 14),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return ln.getString('Please retype your password');
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                      fillColor: ConstantColors().greySecondary,
-                      filled: true,
-                      prefixIcon: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 22.0,
-                            width: 40.0,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/icons/lock.png'),
-                                  fit: BoxFit.fitHeight),
-                            ),
-                          ),
-                        ],
-                      ),
-                      suffixIcon: IconButton(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        icon: Icon(
-                          // Based on passwordVisible state choose the icon
-                          _confirmNewPassswordVisible
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                          color: Colors.grey,
-                          size: 22,
-                        ),
-                        onPressed: () {
-                          // Update the state i.e. toogle the state of passwordVisible variable
-                          setState(() {
-                            _confirmNewPassswordVisible =
-                                !_confirmNewPassswordVisible;
-                          });
-                        },
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: Colors.transparent),
-                          borderRadius: BorderRadius.circular(9)),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: ConstantColors().primaryColor)),
-                      errorBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: ConstantColors().warningColor)),
-                      focusedErrorBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: ConstantColors().primaryColor)),
-                      hintText: ln.getString('Retype password'),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 18)),
-                )),
+            const SizedBox(height: 10),
+
+            // Password & Confirm Password (Hidden via if false)
+            if (false) ...[
+              CommonHelper().labelCommon("Password"),
+              TextFormField(
+                controller: widget.passController,
+                obscureText: !_newpasswordVisible,
+                decoration: const InputDecoration(
+                  hintText: 'Password',
+                ),
+              ),
+              19.toHeight,
+              const SizedBox(height: 10),
+              CommonHelper().labelCommon("Confirm Password"),
+              TextFormField(
+                controller: widget.confirmPassController,
+                obscureText: !_confirmNewPassswordVisible,
+                decoration: const InputDecoration(
+                  hintText: 'Confirm Password',
+                ),
+              ),
+            ],
           ],
         ),
       ),

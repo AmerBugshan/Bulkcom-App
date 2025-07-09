@@ -38,7 +38,7 @@ class _CountryStatesDropdownsState extends State<CountryStatesDropdowns> {
                   ),
 
                   // Country dropdown ===============>
-                  CommonHelper().labelCommon("Choose country"),
+                  CommonHelper().labelCommon("اختر بلدك"),
                   provider.countryDropdownList.isNotEmpty
                       ? Container(
                           width: double.infinity,
@@ -101,11 +101,11 @@ class _CountryStatesDropdownsState extends State<CountryStatesDropdowns> {
                     controller: widget.cityController,
                     validation: (value) {
                       if (value == null || value.isEmpty) {
-                        return ln.getString('Please enter your city');
+                        return ln.getString('ادخل مدينتك');
                       }
                       return null;
                     },
-                    hintText: ln.getString("Enter your city"),
+                    hintText: ln.getString("ادخل مدينتك"),
                     icon: 'assets/icons/location.png',
                     textInputAction: TextInputAction.next,
                   ),
