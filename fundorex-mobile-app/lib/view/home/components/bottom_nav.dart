@@ -14,6 +14,10 @@ class BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ConstantColors cc = ConstantColors();
+
+    // Adjust the index for hidden tab (skipping الفعاليات)
+    int adjustedIndex = currentIndex >= 2 ? currentIndex - 1 : currentIndex;
+
     return SizedBox(
       height: isIos ? 90 : 70,
       child: Consumer<AppStringService>(
@@ -25,33 +29,38 @@ class BottomNav extends StatelessWidget {
           selectedItemColor: cc.primaryColor,
           unselectedItemColor: cc.greyFour,
           backgroundColor: cc.white,
-          onTap: onTabTapped, // new
-          currentIndex: currentIndex, // new
+          onTap: (index) {
+            // Shift index back after hidden tab
+            onTabTapped(index >= 1 ? index + 1 : index);
+          },
+          currentIndex: adjustedIndex,
           items: [
             BottomNavigationBarItem(
               icon: Container(
                 margin: const EdgeInsets.only(bottom: 6),
                 child: SvgPicture.asset('assets/svg/home-icon.svg',
-                    color: currentIndex == 0 ? cc.primaryColor : cc.greyFour,
+                    color: adjustedIndex == 0 ? cc.primaryColor : cc.greyFour,
                     semanticsLabel: 'Acme Logo'),
               ),
               label: ln.getString('الرئيسية'),
             ),
-            BottomNavigationBarItem(
-              icon: Container(
-                margin: const EdgeInsets.only(bottom: 6),
-                // child: SvgPicture.asset('assets/svg/calendar.svg',
-                //     height: 19,
-                //     color: currentIndex == 1 ? cc.primaryColor : cc.greyFour,
-                //     semanticsLabel: 'Acme Logo'),
+            if (false) ...[
+              BottomNavigationBarItem(
+                icon: Container(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  // child: SvgPicture.asset('assets/svg/calendar.svg',
+                  //     height: 19,
+                  //     color: currentIndex == 1 ? cc.primaryColor : cc.greyFour,
+                  //     semanticsLabel: 'Acme Logo'),
+                ),
+                label: ln.getString('الفعاليات'),
               ),
-              label: ln.getString(''),
-            ),
+            ],
             BottomNavigationBarItem(
               icon: Container(
                 margin: const EdgeInsets.only(bottom: 6),
                 child: SvgPicture.asset('assets/svg/settings-icon.svg',
-                    color: currentIndex == 2 ? cc.primaryColor : cc.greyFour,
+                    color: adjustedIndex == 1 ? cc.primaryColor : cc.greyFour,
                     semanticsLabel: 'Acme Logo'),
               ),
               label: ln.getString('الاعدادات'),
@@ -61,7 +70,7 @@ class BottomNav extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 6),
                 child: SvgPicture.asset('assets/svg/user.svg',
                     height: 18,
-                    color: currentIndex == 3 ? cc.primaryColor : cc.greyFour,
+                    color: adjustedIndex == 2 ? cc.primaryColor : cc.greyFour,
                     semanticsLabel: 'Acme Logo'),
               ),
               label: ln.getString('حسابي '),
