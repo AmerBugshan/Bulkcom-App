@@ -58,7 +58,6 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
     emailController.text = profile.email ?? '';
     phoneController.text = profile.phone ?? '';
     customAmountController.text = '1';
-
     amountIndex = -1;
 
     final donateService = Provider.of<DonateService>(context, listen: false);
@@ -72,7 +71,7 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CommonHelper().appbarCommon('Payment', context, () {
+      appBar: CommonHelper().appbarCommon('الدفع', context, () {
         Navigator.pop(context);
       }),
       body: SingleChildScrollView(
@@ -90,7 +89,6 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
 
               final selectedUnits = int.tryParse(customAmountController.text) ?? 1;
               final limitedUnits = selectedUnits > maxAllowed ? maxAllowed : selectedUnits;
-              final totalCost = pricePerUnit * limitedUnits;
 
               final manualPayment = pgProvider.paymentList.firstWhere(
                     (e) => e['name'] == 'manual_payment',
@@ -103,11 +101,9 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
                   CommonHelper().labelCommon("اسم المنتج"),
                   Text(campaign.titleAr ?? campaign.title ?? '-', style: TextStyle(fontSize: 16)),
                   10.toHeight,
-
                   CommonHelper().labelCommon("سعر الوحدة"),
                   Text("$pricePerUnit \$", style: TextStyle(fontSize: 16)),
                   10.toHeight,
-
                   CommonHelper().labelCommon("الكمية المتوفرة"),
                   Text("$totalAvailable (الحد الأقصى: $maxAllowed)", style: TextStyle(fontSize: 16)),
                   20.toHeight,
@@ -118,13 +114,20 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
                     hintText: "كمية المنتج",
                     isNumberField: true,
                     paddingHorizontal: 20,
-                    onChanged: (v) => setState(() {}),
+                    onChanged: (v) {
+                      setState(() {});
+                      final dProvider = Provider.of<DonateService>(context, listen: false);
+                      final selectedUnits = int.tryParse(v) ?? 1;
+                      final pricePerUnit = num.tryParse(campaign.unitPrice?.toString() ?? '0') ?? 0;
+                      dProvider.setDonationAmount(pricePerUnit * selectedUnits);
+                    },
                   ),
                   10.toHeight,
-
+                  if(false)...[
                   CommonHelper().labelCommon("السعر الإجمالي"),
-                  Text("$totalCost \$", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  20.toHeight,
+                  Text("\$${(dProvider.donationAmount ?? 0.0).toStringAsFixed(1)}",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  20.toHeight],
 
                   CommonHelper().labelCommon("Name"),
                   CustomInput(
@@ -153,7 +156,7 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
                   const DonationDetails(),
 
                   if (manualPayment != null) ...[
-                    CommonHelper().labelCommon("Choose payment method"),
+                    CommonHelper().labelCommon("إختر طريقة الدفع"),
                     16.toHeight,
                     InkWell(
                       onTap: () {
@@ -212,7 +215,7 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
                           ),
                         ],
                         30.toHeight,
-                        CommonHelper().buttonPrimary('Choose images', () {
+                        CommonHelper().buttonPrimary('أرفق صورة', () {
                           btProvider.pickImage(context);
                         }),
                         if (btProvider.pickedImage != null)
@@ -232,15 +235,15 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
 
                   TacPp(
                     valueListenable: termsAgree,
-                    tTitle: "Terms & Condition".tr(),
+                    tTitle: "الشروط و الأحكام".tr(),
                     tData: dProvider.dTC,
-                    pTitle: "Privacy policy",
+                    pTitle: "سياسة الخصوصية",
                     pData: dProvider.dPP,
                   ),
 
                   14.toHeight,
 
-                  CommonHelper().buttonPrimary('Pay & Confirm', () {
+                  CommonHelper().buttonPrimary('إتمام الدفع', () {
                     if (nameController.text.trim().isEmpty ||
                         !emailController.text.validateEmail ||
                         phoneController.text.trim().length < 3 ||
@@ -269,7 +272,7 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
                     );
                   }, isloading: dProvider.isloading),
 
-                  40.toHeight
+                  40.toHeight,
                 ],
               );
             },
