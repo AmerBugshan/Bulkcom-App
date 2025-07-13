@@ -5,7 +5,6 @@ import 'package:fundorex/service/app_string_service.dart';
 import 'package:fundorex/service/auth_services/signup_service.dart';
 import 'package:fundorex/service/donate_service.dart';
 import 'package:fundorex/view/auth/signup/components/country_states_dropdowns.dart';
-import 'package:fundorex/view/auth/signup/pages/signup_phone_pass.dart';
 import 'package:fundorex/view/utils/common_helper.dart';
 import 'package:fundorex/view/utils/constant_colors.dart';
 import 'package:fundorex/view/utils/others_helper.dart';
@@ -33,9 +32,25 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController cityController = TextEditingController();
+
+  // Helper method to format phone number
+  String formatPhoneNumber(String phone) {
+    // Remove all non-digit characters
+    String cleaned = phone.replaceAll(RegExp(r'\D'), '');
+
+    // If it starts with 0, remove it
+    if (cleaned.startsWith('0')) {
+      cleaned = cleaned.substring(1);
+    }
+
+    // If it doesn't start with 5, it's invalid
+    if (!cleaned.startsWith('5')) {
+      return '';
+    }
+
+    return cleaned;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,40 +81,74 @@ class _SignupPageState extends State<SignupPage> {
                         children: [
                           const SizedBox(height: 19),
 
-                          // Full Name (Keep it first)
-                          EmailNameFields(
-                            fullNameController: fullNameController,
-                            userNameController: userNameController,
-                            emailController: emailController,
-                            showEmailField: false,  // We'll handle email below
+                          // Full Name Field
+                          CommonHelper().labelCommon("الاسم الكامل"),
+                          TextFormField(
+                            controller: fullNameController,
+                            decoration: InputDecoration(
+                              hintText: ln.getString('أدخل اسمك الكامل'),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              prefixIcon: const Icon(Icons.person),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return ln.getString('الاسم الكامل مطلوب');
+                              }
+                              return null;
+                            },
                           ),
 
                           const SizedBox(height: 8),
 
-                          // Phone Field (Now shown BEFORE Email)
-                          SignupPhonePass(
-                            passController: passwordController,
-                            confirmPassController: confirmPasswordController,
-                            phoneController: phoneController,
+                          // Phone Number Field (This will be the username)
+                          CommonHelper().labelCommon("رقم الجوال"),
+                          TextFormField(
+                            controller: phoneController,
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                              hintText: ln.getString('5XXXXXXXX'),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              prefixIcon: const Icon(Icons.phone),
+                              prefixText: '+966 ',
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return ln.getString('رقم الجوال مطلوب');
+                              }
+
+                              String formatted = formatPhoneNumber(value);
+                              if (formatted.isEmpty || formatted.length != 9) {
+                                return ln.getString('رقم الجوال يجب أن يكون رقمًا سعوديًا صالحًا (مثال: 5XXXXXXXX)');
+                              }
+
+                              return null;
+                            },
                           ),
 
                           const SizedBox(height: 8),
 
-                          // Email Field (Now shown AFTER Phone)
-                          CommonHelper().labelCommon("Email"),
+                          // Email Field
+                          CommonHelper().labelCommon("البريد الإلكتروني"),
                           TextFormField(
                             controller: emailController,
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
-                              hintText: ln.getString('Enter your email'),
+                              hintText: ln.getString('أدخل بريدك الإلكتروني'),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               prefixIcon: const Icon(Icons.email),
                             ),
                             validator: (value) {
-                              if (!value!.validateEmail) {
-                                return ln.getString('Please enter your email');
+                              if (value == null || value.trim().isEmpty) {
+                                return ln.getString('البريد الإلكتروني مطلوب');
+                              }
+                              if (!value.validateEmail) {
+                                return ln.getString('البريد الإلكتروني غير صالح');
                               }
                               return null;
                             },
@@ -113,24 +162,6 @@ class _SignupPageState extends State<SignupPage> {
                           ),
 
                           const SizedBox(height: 8),
-
-                          // Password Fields Hidden via if(false)
-                          if (false) ...[
-                            TextFormField(
-                              controller: passwordController,
-                              obscureText: true,
-                              decoration: const InputDecoration(
-                                labelText: 'Password',
-                              ),
-                            ),
-                            TextFormField(
-                              controller: confirmPasswordController,
-                              obscureText: true,
-                              decoration: const InputDecoration(
-                                labelText: 'Confirm Password',
-                              ),
-                            ),
-                          ],
 
                           // Terms & Conditions
                           Consumer<DonateService>(
@@ -148,27 +179,33 @@ class _SignupPageState extends State<SignupPage> {
                           const SizedBox(height: 10),
 
                           // Sign Up Button
-                          CommonHelper().buttonPrimary("Sign Up", () {
-                            if (_formKey.currentState!.validate()) {
-                              if (termsAgree.value == false) {
-                                OthersHelper().showToast(
-                                    ln.getString(
-                                        'You must agree with the terms and conditions to register'),
-                                    Colors.black);
-                              } else {
-                                if (provider.isloading == false) {
-                                  provider.signup(
-                                    fullNameController.text.trim(),
-                                    '', // username skipped
-                                    emailController.text.trim(),
-                                    '', // password skipped
-                                    cityController.text.trim(),
-                                    context,
+                          CommonHelper().buttonPrimary(
+                            provider.isOtpSending ? "جاري الإرسال..." : "تسجيل حساب جديد",
+                                () {
+                              if (_formKey.currentState!.validate()) {
+                                if (termsAgree.value == false) {
+                                  OthersHelper().showToast(
+                                    ln.getString('يجب الموافقة على الشروط والأحكام للتسجيل'),
+                                    Colors.black,
                                   );
+                                } else {
+                                  if (!provider.isOtpSending && !provider.isloading) {
+                                    // Format phone number for backend
+                                    String formattedPhone = formatPhoneNumber(phoneController.text);
+
+                                    provider.sendRegisterOtp(
+                                      fullNameController.text.trim(),
+                                      formattedPhone, // This becomes the username
+                                      emailController.text.trim(),
+                                      cityController.text.trim(),
+                                      context,
+                                    );
+                                  }
                                 }
                               }
-                            }
-                          }, isloading: provider.isloading == false ? false : true),
+                            },
+                            isloading: provider.isOtpSending || provider.isloading,
+                          ),
 
                           const SizedBox(height: 25),
 
@@ -180,23 +217,27 @@ class _SignupPageState extends State<SignupPage> {
                                 text: TextSpan(
                                   text: ln.getString('لديك حساب بالفعل؟') + '  ',
                                   style: const TextStyle(
-                                      color: Color(0xff646464), fontSize: 14),
+                                    color: Color(0xff646464),
+                                    fontSize: 14,
+                                  ),
                                   children: <TextSpan>[
                                     TextSpan(
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                    const LoginPage()));
-                                          },
-                                        text: ln.getString('سجل دخولك الأن'),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                          color: cc.primaryColor,
-                                        )),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => const LoginPage(),
+                                            ),
+                                          );
+                                        },
+                                      text: ln.getString('سجل دخولك الأن'),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: cc.primaryColor,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),

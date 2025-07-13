@@ -7,7 +7,7 @@ import 'package:fundorex/service/all_events_service.dart';
 import 'package:fundorex/service/app_string_service.dart';
 import 'package:fundorex/service/auth_services/apple_sign_in_sevice.dart';
 import 'package:fundorex/service/auth_services/change_pass_service.dart';
-import 'package:fundorex/service/auth_services/email_verify_service.dart';
+import 'package:fundorex/service/auth_services/phone_verify_service.dart';
 import 'package:fundorex/service/auth_services/facebook_login_service.dart';
 import 'package:fundorex/service/auth_services/google_sign_service.dart';
 import 'package:fundorex/service/auth_services/login_service.dart';
@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CountryStatesService()),
         ChangeNotifierProvider(create: (_) => ProfileService()),
         ChangeNotifierProvider(create: (_) => ChangePassService()),
-        ChangeNotifierProvider(create: (_) => EmailVerifyService()),
+        ChangeNotifierProvider(create: (_) => PhoneVerifyService()),
         ChangeNotifierProvider(create: (_) => LogoutService()),
         ChangeNotifierProvider(create: (_) => ResetPasswordService()),
         ChangeNotifierProvider(create: (_) => RtlService()),
