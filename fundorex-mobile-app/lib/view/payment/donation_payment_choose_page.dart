@@ -87,7 +87,7 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
               final totalAvailable = num.tryParse(campaign.availableQuantity?.toString() ?? '0') ?? 0;
               final maxAllowed = totalAvailable < 10 ? totalAvailable : 10;
 
-              final selectedUnits = int.tryParse(customAmountController.text) ?? 1;
+              final selectedUnits = num.tryParse(customAmountController.text) ?? 1;
               final limitedUnits = selectedUnits > maxAllowed ? maxAllowed : selectedUnits;
 
               final manualPayment = pgProvider.paymentList.firstWhere(
@@ -260,15 +260,21 @@ class _DonationPaymentChoosePageState extends State<DonationPaymentChoosePage> {
 
                     final btProvider = Provider.of<BankTransferService>(context, listen: false);
 
-                    payAction(
-                      'manual_payment',
+                    final pricePerUnit = num.tryParse(campaign.unitPrice?.toString() ?? '0') ?? 0;
+                    final totalPrice = pricePerUnit * limitedUnits;
+
+                    // ✅ إرسال عدد الوحدات والسعر الإجمالي إلى donatePay
+                    dProvider.donatePay(
                       context,
-                      btProvider.pickedImage,
+                      btProvider.pickedImage?.path,
+                      isManualOrCod: true,
+                      selectedPaymentName: 'manual_payment',
                       campaignId: widget.campaignId,
                       name: nameController.text.trim(),
                       email: emailController.text.trim(),
                       phone: phoneController.text.trim(),
-                      anonymousDonate: annonymusDonate,
+                      amount: limitedUnits,
+                      total: totalPrice,
                     );
                   }, isloading: dProvider.isloading),
 

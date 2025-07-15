@@ -23,49 +23,51 @@ import 'package:provider/provider.dart';
 
 payAction(String method, BuildContext context, imagePath,
     {required campaignId,
-    required name,
-    required email,
-    required anonymousDonate,
-    required String phone}) {
-  //to know method names visit PaymentGatewayListService class where payment
-  //methods list are fetching with method name
-
+      required name,
+      required email,
+      required anonymousDonate,
+      required String phone,
+      required int amount,
+      required num total}) {
   switch (method) {
     case 'paypal':
       makePaymentToGetOrderId(context, () {
-        PaypalService()
-            .payByPaypal(context, isFromEventBook: false, phone: phone);
+        PaypalService().payByPaypal(context, isFromEventBook: false, phone: phone);
       },
           selectedPaymentName: method,
           campaignId: campaignId,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
     case 'cashfree':
       makePaymentToGetOrderId(context, () {
-        CashfreeService()
-            .getTokenAndPay(context, isFromEventBook: false, phone: phone);
+        CashfreeService().getTokenAndPay(context, isFromEventBook: false, phone: phone);
       },
           selectedPaymentName: method,
           campaignId: campaignId,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
     case 'flutterwave':
       makePaymentToGetOrderId(context, () {
-        FlutterwaveService()
-            .payByFlutterwave(context, isFromEventBook: false, phone: phone);
+        FlutterwaveService().payByFlutterwave(context, isFromEventBook: false, phone: phone);
       },
           selectedPaymentName: method,
           campaignId: campaignId,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
     case 'instamojo':
       makePaymentToGetOrderId(context, () {
@@ -76,7 +78,9 @@ payAction(String method, BuildContext context, imagePath,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
     case 'marcadopago':
       makePaymentToGetOrderId(context, () {
@@ -87,20 +91,22 @@ payAction(String method, BuildContext context, imagePath,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
     case 'midtrans':
       makePaymentToGetOrderId(context, () {
-        MidtransService()
-            .payByMidtrans(context, isFromEventBook: false, phone: phone);
+        MidtransService().payByMidtrans(context, isFromEventBook: false, phone: phone);
       },
           selectedPaymentName: method,
           campaignId: campaignId,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
-
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
     case 'mollie':
       makePaymentToGetOrderId(context, () {
@@ -111,8 +117,9 @@ payAction(String method, BuildContext context, imagePath,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
-
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
     case 'payfast':
       makePaymentToGetOrderId(context, () {
@@ -123,8 +130,9 @@ payAction(String method, BuildContext context, imagePath,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
-
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
     case 'paystack':
       makePaymentToGetOrderId(context, () {
@@ -135,12 +143,9 @@ payAction(String method, BuildContext context, imagePath,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
-
-      break;
-    case 'paytm':
-      // MercadoPagoService().mercadoPay();
-
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
     case 'squareup':
       makePaymentToGetOrderId(context, () {
@@ -151,22 +156,23 @@ payAction(String method, BuildContext context, imagePath,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
-
     case 'cinetpay':
       makePaymentToGetOrderId(context, () {
-        CinetPayService()
-            .payByCinetpay(context, isFromEventBook: false, phone: phone);
+        CinetPayService().payByCinetpay(context, isFromEventBook: false, phone: phone);
       },
           selectedPaymentName: method,
           campaignId: campaignId,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
-
     case 'paytabs':
       makePaymentToGetOrderId(context, () {
         PaytabsService().payByPaytabs(context, isFromEventBook: false);
@@ -176,9 +182,10 @@ payAction(String method, BuildContext context, imagePath,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
-
     case 'billplz':
       makePaymentToGetOrderId(context, () {
         BillPlzService().payByBillPlz(context, isFromEventBook: false);
@@ -188,22 +195,23 @@ payAction(String method, BuildContext context, imagePath,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
-
     case 'razorpay':
       makePaymentToGetOrderId(context, () {
-        RazorpayService()
-            .payByRazorpay(context, isFromEventBook: false, phone: phone);
+        RazorpayService().payByRazorpay(context, isFromEventBook: false, phone: phone);
       },
           selectedPaymentName: method,
           campaignId: campaignId,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
-
     case 'stripe':
       makePaymentToGetOrderId(context, () async {
         await StripeService().makePayment(context, isFromEventBook: false);
@@ -213,9 +221,10 @@ payAction(String method, BuildContext context, imagePath,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
-
     case 'zitopay':
       makePaymentToGetOrderId(context, () {
         ZitopayService().payByZitopay(context, isFromEventBook: false);
@@ -225,36 +234,41 @@ payAction(String method, BuildContext context, imagePath,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          anonymousDonate: anonymousDonate,
+          amount: amount,
+          total: total);
       break;
-
     case 'manual_payment':
       if (imagePath == null) {
-        OthersHelper()
-            .showToast('You must upload the cheque image', Colors.black);
+        OthersHelper().showToast('You must upload the cheque image', Colors.black);
       } else {
         Provider.of<DonateService>(context, listen: false).donatePay(
-            context, imagePath.path,
-            isManualOrCod: true,
-            selectedPaymentName: method,
-            campaignId: campaignId,
-            name: name,
-            email: email,
-            phone: phone,
-            anonymousDonate: anonymousDonate);
-      }
-      // StripeService().makePayment(context);
-      break;
-    case 'cash_on_delivery':
-      Provider.of<DonateService>(context, listen: false).donatePay(
-          context, null,
+          context,
+          imagePath.path,
           isManualOrCod: true,
           selectedPaymentName: method,
           campaignId: campaignId,
           name: name,
           email: email,
           phone: phone,
-          anonymousDonate: anonymousDonate);
+          amount: amount,
+          total: total,
+        );
+      }
+      break;
+    case 'cash_on_delivery':
+      Provider.of<DonateService>(context, listen: false).donatePay(
+        context,
+        null,
+        isManualOrCod: true,
+        selectedPaymentName: method,
+        campaignId: campaignId,
+        name: name,
+        email: email,
+        phone: phone,
+        amount: amount,
+        total: total,
+      );
       break;
     default:
       {
@@ -265,19 +279,24 @@ payAction(String method, BuildContext context, imagePath,
 
 makePaymentToGetOrderId(BuildContext context, function,
     {required selectedPaymentName,
-    required campaignId,
-    required name,
-    required email,
-    required phone,
-    required anonymousDonate}) async {
+      required campaignId,
+      required name,
+      required email,
+      required phone,
+      required anonymousDonate,
+      required int amount,
+      required num total}) async {
   var res = await Provider.of<DonateService>(context, listen: false).donatePay(
-      context, null,
-      selectedPaymentName: selectedPaymentName,
-      campaignId: campaignId,
-      name: name,
-      email: email,
-      phone: phone,
-      anonymousDonate: anonymousDonate);
+    context,
+    null,
+    selectedPaymentName: selectedPaymentName,
+    campaignId: campaignId,
+    name: name,
+    email: email,
+    phone: phone,
+    amount: amount,
+    total: total,
+  );
 
   if (res == true) {
     await function();

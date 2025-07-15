@@ -230,22 +230,22 @@ class _ProfilePageState extends State<ProfilePage> {
 
                               //Change password,
 
-                              InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (BuildContext context) =>
-                                          const ChangePasswordPage(),
-                                    ),
-                                  );
-                                },
-                                child: SingleMenuItem(
-                                  cc: cc,
-                                  iconSvg: 'assets/svg/password.svg',
-                                  title: 'تغيير كلمة المرور',
-                                ),
-                              ),
+                              // InkWell(
+                              //   onTap: () {
+                              //     Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute<void>(
+                              //         builder: (BuildContext context) =>
+                              //             const ChangePasswordPage(),
+                              //       ),
+                              //     );
+                              //   },
+                              //   child: SingleMenuItem(
+                              //     cc: cc,
+                              //     iconSvg: 'assets/svg/password.svg',
+                              //     title: 'تغيير كلمة المرور',
+                              //   ),
+                              // ),
 
                               // logout
                               sizedBoxCustom(15),

@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,6 @@ class DonateService with ChangeNotifier {
     }
   }
 
-  // ✅ Fixed Method (Now Supports num & String safely)
   setDonationAmount(dynamic amount) {
     if (amount is num) {
       donationAmount = amount;
@@ -89,7 +89,6 @@ class DonateService with ChangeNotifier {
     return tips;
   }
 
-  // Calculate initial tips
   calculateTips({bool isAfterSelectingOrWritingNewAmount = false}) {
     if (tipsAmountType != 'percentage') {
       tips = chargeAmount;
@@ -98,7 +97,7 @@ class DonateService with ChangeNotifier {
           ? donationAmount
           : int.parse(donationAmount) / 100) *
           chargeAmount;
-      print('tips is $tips');
+      print('tips is \$tips');
     }
 
     Future.delayed(const Duration(microseconds: 700), () {
@@ -177,7 +176,7 @@ class DonateService with ChangeNotifier {
     await Provider.of<DonateService>(context, listen: false)
         .fetchDonateSetting(context);
     var response = await http.get(
-      Uri.parse('$baseApi/custom-amounts'),
+      Uri.parse('\$baseApi/custom-amounts'),
     );
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -202,7 +201,7 @@ class DonateService with ChangeNotifier {
 
   Future<bool> fetchDonateSetting(BuildContext context) async {
     var response = await http.get(
-      Uri.parse('$baseApi/donation-admin-settings'),
+      Uri.parse('\$baseApi/donation-admin-settings'),
     );
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -234,20 +233,24 @@ class DonateService with ChangeNotifier {
       defaultDonateAmount = jsonData['donation_default_amount'];
       notifyListeners();
     } else {
-      print('error fetching donate setting${response.body}');
+      print('error fetching donate setting\${response.body}');
     }
 
     return true;
   }
 
-  Future<bool> donatePay(BuildContext context, String? imagePath,
-      {bool isManualOrCod = false,
+  Future<bool> donatePay(
+      BuildContext context,
+      String? imagePath, {
+        bool isManualOrCod = false,
         required selectedPaymentName,
         required campaignId,
         required name,
         required email,
-        required anonymousDonate,
-        required phone}) async {
+        required phone,
+        required num amount,
+        required num total,
+      }) async {
     setLoadingTrue();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
@@ -257,58 +260,118 @@ class DonateService with ChangeNotifier {
     var dio = Dio();
     dio.options.headers['Content-Type'] = 'multipart/form-data';
     dio.options.headers['Accept'] = 'application/json';
-    dio.options.headers['Authorization'] = "Bearer $token";
+    dio.options.headers['Authorization'] = "Bearer \$token";
 
-    if (imagePath != null) {
-      formData = FormData.fromMap({
-        'selected_payment_gateway': selectedPaymentName,
-        'cause_id': campaignId,
-        'amount': donationAmount,
-        'admin_tip': tips,
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'user_id': userId,
-        'anonymous': anonymousDonate == true ? 1 : 0,
-        'manual_payment_attachment': await MultipartFile.fromFile(imagePath,
-            filename: 'bankTransfer$name$imagePath.jpg'),
-      });
-    } else {
-      formData = FormData.fromMap({
-        'selected_payment_gateway': selectedPaymentName,
-        'cause_id': campaignId,
-        'amount': donationAmount,
-        'admin_tip': tips,
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'user_id': userId,
-      });
+    Map<String, dynamic> formFields = {
+      'selected_payment_gateway': selectedPaymentName,
+      'cause_id': campaignId,
+      'amount': amount,
+      'price': total,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'user_id': userId,
+    };
+
+    if (imagePath != null && imagePath.isNotEmpty) {
+      final File file = File(imagePath);
+      if (!file.existsSync()) {
+        setLoadingFalse();
+        OthersHelper().showToast('ملف الصورة غير موجود', Colors.black);
+        return false;
+      }
+
+      formFields['manual_payment_attachment'] = await MultipartFile.fromFile(
+        imagePath,
+        filename: 'purchase_\${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
     }
 
-    var response = await dio.post('$baseApi/user/donation/pay',
-        data: formData,
-        options: Options(
-          validateStatus: (status) => true,
-        ));
+    formData = FormData.fromMap(formFields);
 
-    if ((response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300) {
-      print(response.data);
+    try {
+      var response = await dio.post(
+          '$baseApi/user/donation/pay',
+          data: formData,
+          options: Options(
+            validateStatus: (status) => true,
+            sendTimeout: Duration(seconds: 30),
+            receiveTimeout: Duration(seconds: 30),
+          )
+      );
 
-      orderId = response.data['order_id'];
-      successUrl = response.data['success_url'];
-      cancelUrl = response.data['cancel_url'];
+      if ((response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300) {
+        if (response.data is Map) {
+          orderId = response.data['order_id'];
+          successUrl = response.data['success_url'];
+          cancelUrl = response.data['cancel_url'];
+        }
 
-      notifyListeners();
+        notifyListeners();
 
-      if (isManualOrCod == true) {
-        doNext(context);
+        if (isManualOrCod == true) {
+          doNext(context);
+          setLoadingFalse();
+        }
+        return true;
+      } else {
         setLoadingFalse();
+
+        String errorMessage = 'حدث خطأ';
+
+        if (response.data != null) {
+          if (response.data is Map) {
+            if (response.data.containsKey('validation_errors')) {
+              var validationErrors = response.data['validation_errors'];
+              if (validationErrors is Map) {
+                var firstError = validationErrors.values.first;
+                if (firstError is List && firstError.isNotEmpty) {
+                  errorMessage = firstError.first.toString();
+                }
+              }
+            } else if (response.data.containsKey('msg')) {
+              errorMessage = response.data['msg'].toString();
+            } else if (response.data.containsKey('message')) {
+              errorMessage = response.data['message'].toString();
+            } else if (response.data.containsKey('error')) {
+              errorMessage = response.data['error'].toString();
+            }
+          } else {
+            errorMessage = response.data.toString();
+          }
+        }
+
+        OthersHelper().showToast(errorMessage, Colors.black);
+        return false;
       }
-      return true;
-    } else {
+    } catch (e) {
       setLoadingFalse();
-      OthersHelper().showToast('حدث خطأ', Colors.black);
+      String errorMessage = 'خطأ في الاتصال';
+      if (e is DioException) {
+        switch (e.type) {
+          case DioExceptionType.connectionTimeout:
+          case DioExceptionType.sendTimeout:
+          case DioExceptionType.receiveTimeout:
+            errorMessage = 'انتهت مهلة الاتصال';
+            break;
+          case DioExceptionType.connectionError:
+            errorMessage = 'خطأ في الاتصال بالخادم';
+            break;
+          case DioExceptionType.badResponse:
+            errorMessage = 'استجابة غير صحيحة من الخادم';
+            break;
+          default:
+            errorMessage = 'خطأ في الشبكة';
+        }
+
+        if (e.response?.data != null) {
+          if (e.response!.data is Map && e.response!.data['msg'] != null) {
+            errorMessage = e.response!.data['msg'].toString();
+          }
+        }
+      }
+
+      OthersHelper().showToast(errorMessage, Colors.black);
       return false;
     }
   }
@@ -323,11 +386,11 @@ class DonateService with ChangeNotifier {
       var header = {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
+        "Authorization": "Bearer \$token",
       };
 
       var response = await http.get(
-          Uri.parse('$baseApi/user/donation/payment-status-update/$orderId'),
+          Uri.parse('\$baseApi/user/donation/payment-status-update/\$orderId'),
           headers: header);
       setLoadingFalse();
       if (response.statusCode >= 200 && response.statusCode < 300) {
