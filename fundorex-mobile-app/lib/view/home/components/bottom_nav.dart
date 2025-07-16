@@ -63,7 +63,7 @@ class BottomNav extends StatelessWidget {
                     color: adjustedIndex == 1 ? cc.primaryColor : cc.greyFour,
                     semanticsLabel: 'Acme Logo'),
               ),
-              label: ln.getString('الاعدادات'),
+              label: ln.getString('قائمتي'),
             ),
             BottomNavigationBarItem(
               icon: Container(

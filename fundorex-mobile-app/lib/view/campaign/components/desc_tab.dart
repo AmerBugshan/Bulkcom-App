@@ -187,12 +187,12 @@ class _DescTabState extends State<DescTab> with TickerProviderStateMixin {
               ),
 
               sizedBoxCustom(25),
-              PeopleDonatedList(
-                cc: cc,
-                width: 200,
-                marginRight: 20,
-                provider: provider,
-              ),
+              // PeopleDonatedList(
+              //   cc: cc,
+              //   width: 200,
+              //   marginRight: 20,
+              //   provider: provider,
+              // ),
 
               sizedBoxCustom(25),
 

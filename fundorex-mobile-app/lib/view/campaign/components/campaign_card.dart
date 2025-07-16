@@ -19,6 +19,7 @@ class CampaignCard extends StatelessWidget {
     super.key,
     required this.imageLink,
     required this.title,
+    this.titleAr,
     required this.width,
     required this.marginRight,
     required this.pressed,
@@ -27,11 +28,13 @@ class CampaignCard extends StatelessWidget {
     required this.goalAmount,
     this.buttonText = 'شارك الان!',
     required this.remainingTime,
+    this.price,
   });
 
   final camapaignId;
   final imageLink;
   final title;
+  final String? titleAr;
   final buttonText;
   final raisedAmount;
   final goalAmount;
@@ -39,6 +42,9 @@ class CampaignCard extends StatelessWidget {
   final double width;
   final double marginRight;
   final VoidCallback pressed;
+
+  // Product features
+  final double? price;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +85,7 @@ class CampaignCard extends StatelessWidget {
                     width: double.infinity,
                     imageUrl: imageLink,
                     errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+                    const Icon(Icons.error),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -91,9 +97,11 @@ class CampaignCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       sizedBoxCustom(10),
-                      //Title
+                      //Title - use titleAr if RTL and available
                       Text(
-                        title,
+                        rtlP.direction == 'rtl' && titleAr != null
+                            ? titleAr!
+                            : title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -102,6 +110,34 @@ class CampaignCard extends StatelessWidget {
                             height: 1.3,
                             fontWeight: FontWeight.w600),
                       ),
+
+                      // Product Price (if available)
+                      if (price != null) ...[
+                        sizedBoxCustom(8),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.attach_money,
+                              size: 16,
+                              color: cc.primaryColor,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: AutoSizeText(
+                                rtlP.currencyDirection == 'left'
+                                    ? "${rtlP.currency}${price!.toStringAsFixed(2)}"
+                                    : "${price!.toStringAsFixed(2)}${rtlP.currency}",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: cc.primaryColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
 
                       sizedBoxCustom(10),
                       //progress bar
@@ -180,27 +216,33 @@ class CampaignCard extends StatelessWidget {
                       sizedBoxCustom(15),
                       //Donate button
                       CommonHelper().buttonPrimary(
-                          hasTimeLeft ? buttonText : 'Expired', () {
-                        //
-                        if (!hasTimeLeft) return;
-                        Provider.of<CampaignDetailsService>(context,
+                          hasTimeLeft
+                              ? buttonText
+                              : (rtlP.direction == 'rtl' ? 'منتهي' : 'Expired'),
+                              () {
+                            //
+                            if (!hasTimeLeft) return;
+
+                            Provider.of<CampaignDetailsService>(context,
                                 listen: false)
-                            .fetchCampaignDetails(
+                                .fetchCampaignDetails(
                                 context: context, campaignId: camapaignId);
-                        //
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute<void>(
-                            builder: (BuildContext context) =>
-                                DonationPaymentChoosePage(
-                                    campaignId: camapaignId),
-                          ),
-                        );
-                      },
+                            //
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    DonationPaymentChoosePage(
+                                        campaignId: camapaignId),
+                              ),
+                            );
+                          },
                           paddingVertical: 11,
                           fontsize: 13,
                           borderRadius: 7,
-                          bgColor: hasTimeLeft ? cc.primaryColor : Colors.red)
+                          bgColor: hasTimeLeft
+                              ? cc.primaryColor
+                              : Colors.red)
                     ],
                   ),
                 )
