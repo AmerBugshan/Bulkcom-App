@@ -125,8 +125,8 @@ class CampaignCard extends StatelessWidget {
                             Expanded(
                               child: AutoSizeText(
                                 rtlP.currencyDirection == 'left'
-                                    ? "${rtlP.currency}${price!.toStringAsFixed(2)}"
-                                    : "${price!.toStringAsFixed(2)}${rtlP.currency}",
+                                    ? "${price!.toStringAsFixed(2)}"
+                                    : "${price!.toStringAsFixed(2)}",
                                 maxLines: 1,
                                 style: TextStyle(
                                   color: cc.primaryColor,
@@ -162,8 +162,8 @@ class CampaignCard extends StatelessWidget {
                                 sizedBoxCustom(5),
                                 AutoSizeText(
                                   rtlP.currencyDirection == 'left'
-                                      ? "${rtlP.currency}${raisedAmount ?? 0}"
-                                      : "${raisedAmount ?? 0}${rtlP.currency}",
+                                      ? "${raisedAmount ?? 0}"
+                                      : "${raisedAmount ?? 0}",
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -198,8 +198,8 @@ class CampaignCard extends StatelessWidget {
                                 sizedBoxCustom(5),
                                 AutoSizeText(
                                   rtlP.currencyDirection == 'left'
-                                      ? "${rtlP.currency}${goalAmount ?? 0}"
-                                      : "${goalAmount ?? 0}${rtlP.currency}",
+                                      ? "${goalAmount ?? 0}"
+                                      : "${goalAmount ?? 0}",
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
