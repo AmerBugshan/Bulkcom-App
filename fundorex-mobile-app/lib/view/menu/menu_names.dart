@@ -1,89 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:fundorex/view/campaign/create_campaign_page.dart';
 import 'package:fundorex/view/campaign/followed_user_list_page.dart';
-import 'package:fundorex/view/campaign/my_campaign/my_campaigns_page.dart';
 import 'package:fundorex/view/dashboard/dashboard_page.dart';
 import 'package:fundorex/view/donations/donations_list_page.dart';
-import 'package:fundorex/view/events/events_bookings_page.dart';
-import 'package:fundorex/view/reward_points/reward_points_page.dart';
 import 'package:fundorex/view/supports/my_tickets_page.dart';
+import 'package:fundorex/view/menu/terms_conditions_page.dart';
+import 'package:fundorex/view/menu/contact_methods_page.dart';
 
 class MenuNames {
-  String name;
-  String icon;
+  final String name;
+  final String icon;
 
-  MenuNames(this.name, this.icon);
+  const MenuNames(this.name, this.icon);
 }
 
-List menuNamesList = [
+// ✅ Explicit type to avoid the List<dynamic> issue
+final List<MenuNames> menuNamesList = [
   MenuNames('لوحة التحكم', 'assets/svg/dashboard.svg'),
-  // MenuNames('حجز الفعاليات', 'assets/svg/event.svg'),
   MenuNames('مشترياتي', 'assets/svg/donations.svg'),
   MenuNames('الحملات المتابعة', 'assets/svg/following.svg'),
   MenuNames('اقتراح منتج جديد', 'assets/svg/support-ticket.svg'),
-  // MenuNames('نقاط المكافأة', 'assets/svg/rewards.svg'),
-
-  // MenuNames('Create campaign', 'assets/svg/following.svg'),
-  // MenuNames('My campaigns', 'assets/svg/following.svg'),
+  MenuNames('الشروط والأحكام', 'assets/svg/terms.svg'),
+  MenuNames('طرق التواصل', 'assets/svg/contact.svg'),
 ];
 
-getNavLink(int i, BuildContext context) {
+void getNavLink(int i, BuildContext context) {
   if (i == 0) {
-    return Navigator.push(
+    Navigator.push(
       context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const DashboardPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const DashboardPage()),
     );
-  // } else if (i == 1) {
-  //   return Navigator.push(
-  //     context,
-  //     MaterialPageRoute<void>(
-  //       builder: (BuildContext context) => const EventsBookingsPage(),
-  //     ),
-  //   );
   } else if (i == 1) {
-    return Navigator.push(
+    Navigator.push(
       context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const DonationsListPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const DonationsListPage()),
     );
   } else if (i == 2) {
-    return Navigator.push(
+    Navigator.push(
       context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const FollowedUserListPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const FollowedUserListPage()),
     );
   } else if (i == 3) {
-    return Navigator.push(
+    Navigator.push(
       context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const MyTicketsPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const MyTicketsPage()),
     );
-  // } else if (i == 4) {
-  //   return Navigator.push(
-  //     context,
-  //     MaterialPageRoute<void>(
-  //       builder: (BuildContext context) => const RewardPointsPage(),
-  //     ),
-  //   );
-    }
-    // else if (i == 6) {
-  //   return Navigator.push(
-  //     context,
-  //     MaterialPageRoute<void>(
-  //       builder: (BuildContext context) => const CreateCampaignPage(),
-  //     ),
-  //   );
-  // } else if (i == 7) {
-  //   return Navigator.push(
-  //     context,
-  //     MaterialPageRoute<void>(
-  //       builder: (BuildContext context) => const MyCampaignsPage(),
-  //     ),
-  //   );
-  // }
+  } else if (i == 4) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const TermsConditionsPage()),
+    );
+  } else if (i == 5) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ContactMethodsPage()),
+    );
+  }
 }
